@@ -1,0 +1,135 @@
+@font-face {
+    font-family: main;
+    src: url(/frontend/fonts/Caveat/Caveat-VariableFont_wght.ttf);
+}
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+html,body{
+    height: 100%;
+    width: 100%;
+}
+
+header{
+    width: 100%;
+    background-color: #f5cf04;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+    box-sizing: border-box;
+}
+#start img{
+    background-color: transparent;
+    width: 200px;
+}
+#contentbar{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    height: 90%;
+}
+
+#contentbar button{
+    border: 0;
+    height: 100%;
+    width: 120px;
+    background-color: transparent;
+    border-radius: 10px;
+}
+
+header #contentbar button:hover, #profile button:hover{
+    background-color: orange;
+}
+
+#profile{
+    height: 90%;
+}
+
+
+#profile button{
+    border: 0;
+    background-color: transparent;
+    height: 100%;
+    width: 80px;
+    border-radius: 10px;
+    padding-right: 10px;
+}
+
+#sidebar {
+    font-family: main;
+    height: 100%;
+    width: 80px;
+    display: flex;
+    background-color: #171717;
+    flex-direction: column;
+    align-items: flex-start; 
+    justify-content: flex-start; 
+    gap: 10px;
+    padding: 10px 5px;
+    overflow: hidden; 
+    transition: width 0.3s ease;
+    box-sizing: border-box;
+}
+
+#sidebar:hover {
+    width: 20%;
+}
+
+#sidebar button {
+    cursor: pointer;
+    border: none;
+    background-color: transparent;
+    color: white;
+    width: 100%;
+    height: 50px;
+    border-radius: 10px;
+    white-space: nowrap;
+    
+    
+    display: flex;
+    align-items: center;
+    padding: 0 15px; 
+    text-align: left;
+    transition: background-color 0.2s;
+}
+
+#sidebar button i {
+    font-size: 20px;
+    min-width: 30px;
+    display: flex;
+    justify-content: center;
+}
+
+
+#sidebar button span {
+    opacity: 0;
+    margin-left: 10px;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+}
+
+#sidebar:hover button span {
+    opacity: 1;
+}
+
+#sidebar button:hover {
+    background-color: #f5cf04;
+    color: black; 
+}
+
+#parent{
+    height: 100%;
+    width: 100%;
+    display: flex;
+}
+#content{
+    background-color: #f4f4f4;
+    height: 100%;
+    width: 100%;
+}

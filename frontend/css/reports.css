@@ -1,0 +1,276 @@
+@font-face {
+    font-family: main;
+    src: url(/frontend/fonts/Stardom_Complete/Stardom_Complete/Fonts/WEB/fonts/Stardom-Regular.woff);
+}
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: main;
+}
+html,body{
+    height: 100%;
+    width: 100%;
+}
+
+header{
+    width: 100%;
+    background-color: #f5cf04;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+    box-sizing: border-box;
+}
+#start img{
+    background-color: transparent;
+    width: 200px;
+}
+#contentbar{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    height: 90%;
+}
+
+#contentbar button{
+    border: 0;
+    height: 100%;
+    width: 120px;
+    background-color: transparent;
+    border-radius: 10px;
+}
+
+header #contentbar button:hover, #profile button:hover{
+    background-color: orange;
+}
+
+#profile{
+    height: 90%;
+}
+
+
+#profile button{
+    border: 0;
+    background-color: transparent;
+    height: 100%;
+    width: 80px;
+    border-radius: 10px;
+    padding-right: 10px;
+}
+
+#sidebar {
+    font-family: main;
+    height: 100%;
+    width: 80px;
+    display: flex;
+    background-color: #171717;
+    flex-direction: column;
+    align-items: flex-start; 
+    justify-content: flex-start; 
+    gap: 10px;
+    padding: 10px 5px;
+    overflow: hidden; 
+    transition: width 0.3s ease;
+    box-sizing: border-box;
+}
+
+#sidebar:hover {
+    width: 20%;
+}
+
+#sidebar button {
+    cursor: pointer;
+    border: none;
+    background-color: transparent;
+    color: white;
+    width: 100%;
+    height: 50px;
+    border-radius: 10px;
+    white-space: nowrap;
+    
+    
+    display: flex;
+    align-items: center;
+    padding: 0 15px; 
+    text-align: left;
+    transition: background-color 0.2s;
+}
+
+#sidebar button i {
+    font-size: 20px;
+    min-width: 30px;
+    display: flex;
+    justify-content: center;
+}
+
+#sidebar button span {
+    opacity: 0;
+    margin-left: 10px;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+}
+
+#sidebar:hover button span {
+    opacity: 1;
+}
+
+#sidebar button:hover {
+    background-color: #f5cf04;
+    color: black; 
+}
+
+#parent{
+    height: 100%;
+    width: 100%;
+    display: flex;
+}
+
+#content{
+    background-color: #f4f4f4;
+    height: 100%;
+    width: 100%;
+    padding: 25px 20px;
+}
+
+/* Main Content */
+
+#parent-1{
+    display: flex;
+    justify-content: space-between;
+    height: 300px;
+    width: 100%;
+    /* background-color: #f5cf04; */
+}
+#content h1{
+    margin-bottom: 10px;
+}
+#graph{
+    width: 68%;
+    height: 100%;
+    background-color: transparent;
+    border-radius: 10px;
+    border: 1px solid gray;
+}
+
+#value{
+    width: 30%;
+    height: 100%;
+    background-color: white;
+    border-radius: 10px;
+    border: 1px solid gray;
+}
+
+#titlee{
+    display: flex;
+    justify-content: space-between;
+    background-color: #f4f4f4;
+    align-items: center;
+    height: 50px;
+    border-radius: 10px;
+    border-bottom: 1px solid gray;
+}
+#main-graph{
+    background-color: white;
+    height: 248px;
+    border-radius: 10px;
+}
+#titlee h4{
+    margin-left: 10px;
+}
+select{
+    width: 100%;
+    height: 70%;
+    align-self: center;
+    margin-right: 10px;
+    border-radius: 10px;
+}
+#seelect{
+    display: flex;
+    width: 200px;
+
+    border-radius: 10px;
+    height: 50px;
+}
+
+#value{
+    display: flex;
+    flex-direction: column;
+}
+#value h4{
+    padding: 15px 10px;
+    align-self: left;
+    align-self: top;
+}
+
+#paisa{
+    display: flex;
+    height: 100%;
+    justify-content: center;
+}
+#paisa h1{
+    text-align: center;
+    justify-content: center;
+    align-content: center;
+
+}
+
+#parent-2{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-top: 10px;
+    height: 215px;
+    background-color: #f4f4f4;
+    border: 1px solid gray;
+    border-radius: 10px;
+}
+#parent-2 h4{
+    font-size: 20px;
+    padding: 5px 10px;
+}
+
+
+#list{
+    width: 100%;
+    height: 100%;
+    border: 1px solid gray;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    border-radius: 10px;
+    justify-content: space-between;
+}
+.sub{
+    width: 30%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+}
+.sub button{
+    height:80%;
+    padding: 10px;
+    width: 100%;
+    border-radius: 10px;
+    text-align: center;
+}
+.svg{
+    border: 1px solid gray;
+}
+.special{
+    background-color: #f5cf04;
+    color: black;
+    border: #f4f4f4;
+}
+.special:hover{
+    background-color:  orange;
+}
+.svg:hover{
+    background-color: white;
+}

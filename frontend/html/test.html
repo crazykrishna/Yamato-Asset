@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <style>/* 1. Base Sidebar Layout */
+.sidebar {
+  width: 70px; /* Only wide enough for the icons by default */
+  height: 100vh;
+  background-color: #1e1e24;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 15px 10px;
+  overflow: hidden; /* Crucial: stops expanding text from breaking the layout */
+  transition: width 0.3s ease; /* Smooth sliding expansion */
+}
+
+/* 2. Sidebar Hover State (Expands the container) */
+.sidebar:hover {
+  width: 240px; /* Expands to fit text */
+}
+
+/* 3. Button Layout styling */
+.sidebar-btn {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 12px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap; /* Keeps text on a single line while expanding */
+}
+
+/* 4. Icon Sizing */
+.btn-icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0; /* Prevents the image from shrinking or warping */
+}
+
+/* 5. Default Text State (Hidden via opacity) */
+.btn-text {
+  margin-left: 15px;
+  color: #ffffff;
+  font-family: sans-serif;
+  opacity: 0; /* Hidden by default */
+  transition: opacity 0.2s ease; /* Fades in nicely */
+}
+
+/* 6. Reveal Text when the Sidebar is Hovered */
+.sidebar:hover .btn-text {
+  opacity: 1; /* Fades in smoothly after sidebar starts expanding */
+}
+</style>
+<div class="sidebar">
+  <button class="sidebar-btn">
+    <i id="btn-icon"class="ri-home-5-line"></i>>
+    <span class="btn-text">Home</span>
+  </button>
+  
+  <button class="sidebar-btn">
+    <img src="settings-icon.png" alt="Settings" class="btn-icon">
+    <span class="btn-text">Settings</span>
+  </button>
+</div>
+</body>
+</html>

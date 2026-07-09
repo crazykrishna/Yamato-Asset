@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assets Management Portal</title>
+    <link
+        href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css"
+        rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/frontend/css/register asset.css">
+</head>
+<body>
+    <header>
+        <div id="start">
+            <img src="/frontend/images/logo-Photoroom.png" alt="yamatoo">
+        </div>
+        <div id="contentbar">
+            <button id="home"><i class="ri-home-5-line" id="but-icon"></i> HOME</button>
+            <button id="assets-list"><i class="ri-file-list-3-line" id="but-icon"></i> ASSETS LIST</button>
+            <button id="inventory"><i class="ri-folder-chart-line" id="but-icon"></i> INVENTORY</button>
+            <button id="reports"><i class="ri-dossier-line" id="but-icon"></i> REPORTS</button>
+        </div>
+
+        <div id="profile">
+            <i id="i" class="ri-user-2-line"></i>
+            <button id="log-out">Log Out</button>
+        </div>
+    </header>
+
+    <div id="parent">
+        <div id="sidebar">
+    <button id="find">
+        <i class="ri-search-line"></i> 
+        <span>Find</span>
+    </button>
+    <button id="assests-list">
+        <i class="ri-file-list-3-line"></i> 
+        <span>Assets list</span>
+    </button>
+    <button id="Register-Asset">
+        <i class="ri-registered-line"></i> 
+        <span>Register Asset</span>
+    </button>
+    <button id="Register-New-User">
+        <i class="ri-user-add-line"></i> 
+        <span>Register New User</span>
+    </button>
+    <button id="profilee">
+        <i id="i" class="ri-user-2-line"></i>
+        <span>Profile</span>
+    </button>
+</div>
+        <div id="content">
+            <div id="div1">
+                <div id="div2">
+                    <h1>Register New Asset</h1><br>
+                    <h5>Please fill the following form to register new assets.</h5>
+                </div>
+                <div id="div3">
+                    <button type="submit" form="register-asset-form">Register</button>
+                </div>
+            </div>
+
+            <div id="form-parent">
+                <form action="submit" id="register-asset-form">
+                    <div class="form-group">
+                        <label for="Asset name">Asset name</label>
+                        <input class="iinput" id="asset-name" type="text" placeholder="Enter Company or Brand... ">
+                    </div>
+                    <div class="form-group">
+                        <label for="Serial Number">Serial Number</label>
+                        <input class="iinput"  id="asset-serial" type="text" placeholder="Eg. ABC1234D678">
+                    </div>
+                    <div class="form-group">
+                        <label for="Asset name">Purchase Date</label>
+                        <input class="iinput"  id="asset-date" type="date">
+                    </div>
+                    <div class="form-group">
+                        <label for="Asset name">Asset Type</label>
+                        <input class="iinput"  id="asset-type" type="text" placeholder="Eg. Laptop, Mobile, Mouse, Keyboard">
+                    </div>
+                    <div class="form-group">
+                        <label for="Asset name">Status</label>
+                        <select class="iinput" id="asset-status" >
+                            <option value="" disabled selected>Select status</option>
+                            <option value="active">Active</option>
+                            <option value="broken">Broken</option>
+                            <option value="repair">Under Repair</option>
+                        </select>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="Asset name">Remarks</label>
+                        <textarea id="iinputt" type="text" rows="4" placeholder="Description"></textarea>
+                    </div>
+                </form>
+                
+            </div>  
+        
+        </div>
+
+
+    </div>
+    <script src="/frontend/java/register asset.js"></script>
+</body>
+</html>

@@ -1,0 +1,127 @@
+@font-face {
+    font-family: main;
+    src: url(/frontend/fonts/Montserrat/Montserrat-Italic-VariableFont_wght.ttf);
+}
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+html,body{
+    height: 100%;
+    width: 100%;
+}
+
+video{
+    position:absolute;
+    object-fit: cover;
+    /* height: 100%; */
+    width:100%;
+    background-color: black;
+    margin: 0;
+}
+
+
+#logo{
+    display: flex;
+    flex-direction: column;
+    justify-content: top;
+    align-items: center;
+    position: relative;
+    height: 100%;
+    width: 100%;
+}
+
+#main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    
+    background-color: #f5cf04;
+    z-index: 1;
+    margin-top: 100px;
+    width: 320px;
+    height: 320px;
+    box-sizing: border-box;
+    border-radius: 5px;
+    font-family: main;
+    box-shadow: 0 0 10px 1px white;
+
+}
+
+form input:focus {
+    border-color: #007fff;
+    outline: none;
+}
+
+form button:hover {
+    background-color: #e0e0e0;
+}
+
+form{
+    display: flex;
+    flex-direction: column;
+    background-color: transparent;
+    padding: 8px;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 400px;
+}
+form label{
+    /* margin-bottom: 10px; */
+    font-size: 18px;
+    font-weight: 500;
+}
+
+#main h2,h3{
+    height: auto;
+    width: 100%;
+    text-align: center;
+    font-size: larger;
+}
+
+form input {
+    text-align: left    ;
+    height: 30px;
+    width: 100%;
+    padding: 5px;
+    font-family: main;
+    background-color: rgb(246, 251, 253);
+    box-sizing: border-box; 
+    margin: 0;
+    border: 0.5px solid #f5cf04;
+    border-radius: 8px;
+}
+
+form button {
+    width: 50%;
+    align-self: center;
+    height: 30px;
+    border: 0;
+    font-family: main;
+    border-radius: 8px;
+    background-color: rgb(230, 129, 13);
+}
+#main2 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    
+    background-color: white;
+    z-index: 1;
+    /* margin-top: 100px; */
+    width: 305px;
+    height: 305px;
+    box-sizing: border-box;
+    border-radius: 11px;
+    font-family: main;
+}
+#logo img {
+    height: 120px;
+    z-index: 1;
+    /* align-self: top; */
+}
+

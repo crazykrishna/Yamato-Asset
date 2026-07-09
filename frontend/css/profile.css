@@ -1,0 +1,329 @@
+@font-face {
+    font-family: main;
+    src: url(/frontend/fonts/Caveat/Caveat-VariableFont_wght.ttf);
+}
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+html,body{
+    height: 100%;
+    width: 100%;
+}
+
+header{
+    width: 100%;
+    background-color: #f5cf04;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+    box-sizing: border-box;
+}
+#start img{
+    background-color: transparent;
+    width: 200px;
+}
+#contentbar{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    height: 90%;
+}
+
+#contentbar button{
+    border: 0;
+    height: 100%;
+    width: 120px;
+    background-color: transparent;
+    border-radius: 10px;
+}
+
+header #contentbar button:hover, #profile button:hover{
+    background-color: orange;
+}
+
+#profile{
+    height: 90%;
+}
+
+#profile button{
+    border: 0;
+    background-color: transparent;
+    height: 100%;
+    width: 80px;
+    border-radius: 10px;
+    padding-right: 10px;
+}
+
+#sidebar {
+    font-family: main;
+    height: 100%;
+    width: 80px;
+    display: flex;
+    background-color: #171717;
+    flex-direction: column;
+    align-items: flex-start; 
+    justify-content: flex-start; 
+    gap: 10px;
+    padding: 10px 5px;
+    overflow: hidden; 
+    transition: width 0.3s ease;
+    box-sizing: border-box;
+}
+
+#sidebar:hover {
+    width: 20%;
+}
+
+#sidebar button {
+    cursor: pointer;
+    border: none;
+    background-color: transparent;
+    color: white;
+    width: 100%;
+    height: 50px;
+    border-radius: 10px;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    padding: 0 15px; 
+    text-align: left;
+    transition: background-color 0.2s;
+}
+
+#sidebar button i {
+    font-size: 20px;
+    min-width: 30px;
+    display: flex;
+    justify-content: center;
+}
+
+#sidebar button span {
+    opacity: 0;
+    margin-left: 10px;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+}
+
+#sidebar:hover button span {
+    opacity: 1;
+}
+
+#sidebar button:hover {
+    background-color: #f5cf04;
+    color: black; 
+}
+
+#parent{
+    height: calc(100% - 70px); /* FIXED: Accommodates header height precisely to prevent screen cutoff */
+    width: 100%;
+    display: flex;
+}
+#content{
+    display: flex;
+    flex-direction: column;
+    background-color: #f4f4f4;
+    height: 100%;
+    width: 100%;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+#parent-2{
+    display: flex;
+    justify-content: space-between;
+    align-content: center;
+    width: 100%;
+    height: 300px;   
+    background-color: transparent;
+    flex-shrink: 0; /* FIXED: Prevents this entire block from collapsing */
+}
+
+#all{
+    width: 100%;
+    height: 100%;
+    border: 1px solid gray;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    border-radius: 10px;
+    justify-content: space-between;
+    font-size: 20px;
+}
+
+.sub{
+    width: 30%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+}
+.sub button{
+    height:80%;
+    padding: 10px;
+    width: 100%;
+    border-radius: 10px;
+    text-align: center;
+}
+.svg{
+    border: 1px solid gray;
+}
+.special{
+    background-color: #f5cf04;
+    color: black;
+    border: #f4f4f4;
+}
+.special:hover{
+    background-color:  orange;
+}
+.svg:hover{
+    background-color: white;
+}
+
+#profileee{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background-color: white;
+    width: 50%;
+    border-radius: 10px ;
+    border: 1px solid gray;
+    padding: 15px;
+}
+
+#profileee h1{
+    text-align: center;
+}
+
+#test{
+    height: 85%;
+    background-color: white;
+    width: 100%;
+    border-radius: 10px ;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#test input{
+    margin-top: 5px;
+    height: 30px;
+    border-radius: 10px;
+    border: 1px solid gray;
+    padding: 5px;
+}
+
+img{
+    height: auto;
+    max-height: 90%;
+    width: 45%;
+    object-fit: contain;
+}
+
+#credentials{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 50%;
+    padding-right: 10px;
+}
+
+label{
+    font-size: 16px;
+    font-weight: bold;
+}
+
+/* FIXED: Merged duplicate #uploads identifiers cleanly */
+#uploads{
+    height: 100%;
+    width: 49%;
+    background-color: white;
+    border-radius: 10px ;
+    border: 1px solid gray;
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+}
+
+#uploads h2{
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+#files{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
+
+.roww{
+    display: flex;
+    justify-content: space-between;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    height: 28%; /* FIXED: Fits row elements proportionally inside parent bounds */
+    align-items: center;
+    padding: 0 15px;
+}
+
+.roww h3 {
+    font-size: 16px;
+    width: 100px;
+}
+
+.roww input[type="file"] {
+    width: 50%;
+}
+
+.roww button{
+    height: 70%;
+    width: 90px;
+    border-radius: 10px;
+    border: 0;
+    background-color: chocolate;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+#change{
+    border: 1px solid gray;
+    background-color: #f5cf04;
+    height: 30px;
+    width: 50%;
+    align-self: center;
+    border-radius: 10px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+#list{
+    margin-top: 15px;
+    min-height: 150px;
+    width: 100%;
+    background-color: transparent;
+    border-radius: 10px;
+    border: 1px solid gray;
+    padding: 15px;
+}
+
+#list h1{
+    margin-bottom: 10px;
+}
+
+th{
+    height: 40px;
+    background-color: rgb(196, 194, 194);
+    border-collapse: collapse;
+    border-radius: 10px;
+    min-width: 80px;
+}

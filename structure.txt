@@ -1,0 +1,105 @@
+--------------------------------------------------------- Y A M A T O - A S S E T - M A N A G E M E N T - S Y S T E M -------------------------------------------------
+
+REQUIREMENTS :
+--------------
+
+HTML
+CSS
+JAVASCRIPT
+NODE.JS
+EXPRESS.JS
+MYSQL
+
+TOTAL DATABASES:
+---------------
+
+1. LOGIN.SQL
+2. ASSETS.SQL
+3. EMPLOYEE.SQL
+4. REGISTERED ASSETS.SQL
+
+TOTAL WEBPAGES:
+---------------
+
+1. LOGIN.HTML
+2. HOME.HTML
+3. ASSETS LIST.HTML
+4. INVENTORY.HTML
+5. REPORTS.HTML
+6. REGISTER.HTML
+7. REGISTER_ASSET.HTML
+
+------------------------------------------------------------------------- CONTENTS ------------------------------------------------------------------------------------
+
+1. LOGIN.HTML -
+	- USERNAME 
+	- PASSWORD
+	- AFTER AUTHENTICATION -> HOME.HTML
+
+2. HOME.HTML -
+	- WELCOME {USERNAME}
+	- BASIC INFORMATION
+	- GRAPHS OF -
+		- TOTAL CATEGORY
+		- INVENTORY
+		- UTILIZATION RATE
+	- REGISTRATION OF NEW ASSET -> REGISTER.HTML
+
+3. ASSETS.HTML-
+	- TABLE OF ALL ASSETS
+	- CONTENTS OF TABLE :-
+		- HOST_ID
+		- ASSET_NAME
+		- ASSET_CATEGORY
+		- EMPLOYEE_ID
+		- EMPLOYEE_NAME
+		- EMPLOYEE_NUMBER
+		- EMPLOYEE_EMAIL
+		- MODEL_NUMBER
+		- ASSET_PURCHASE_DATE
+		- REMARKS (IF ANY)
+
+	- SEARCH AND FILTER BAR
+		
+4. INVENTORY.HTML -
+	- TABLE OF INVENTRY ASSETS --- CONTENT --->
+		- ASSET_ID
+		- ASSET_NAME
+		- ASSET_MODEL
+		- ASSET_PURCHASE_DATE
+		- ASSET_LICENSE_DATE
+		- ASSET_TYPE
+
+	- SEARCH AND FILTER BAR
+
+5. REPORTS.HTML -
+	- REPORT OF SPECIFIC OR ALL EMPLOYEE(S)
+
+6. REGISTER.HTML - 
+	- FORM -
+		- NAME
+		- EMPLOYEE_ID
+		- EMAIL
+		- PHONE NUMBER
+		- DEPARTMENT
+		- TYPE OF ASSET REQUIRED
+
+7. ASSET REGISTER.HTML -
+	FORM - 
+		- ASSET_ID
+		- ASSET_NAME
+		- ASSET_MODEL
+		- ASSET_PURCHASE_DATE
+		- ASSET_LICENSE_DATE
+		- ASSET_TYPE
+		
+
+---------------------- FLOW CHART OF THE WEBSITE --------------------------------
+
+				      LOGIN 
+				 	|
+				       HOME 
+					| 
+         _______________________________________________________________
+	|		|		|		|		|		
+    ASSETS.HTML	   INVENTORY.HTML    REPORTS.HTML   REGISTER.HTML   ASSET REGISTER.HTML

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assets Management Portal</title>
+    <link
+        href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css"
+        rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/frontend/css/register new user.css">
+</head>
+<body>
+    <header>
+        <div id="start">
+            <img src="/frontend/images/logo-Photoroom.png" alt="yamatoo">
+        </div>
+        <div id="contentbar">
+            <button id="home"><i class="ri-home-5-line"></i> HOME</button>
+            <button id="assets-list"><i class="ri-file-list-3-line"></i> ASSETS LIST</button>
+            <button id="inventory"><i class="ri-folder-chart-line"></i> INVENTORY</button>
+            <button id="reports"><i class="ri-dossier-line"></i> REPORTS</button>
+        </div>
+
+        <div id="profile">
+            <i id="i" class="ri-user-2-line"></i>
+            <button id="log-out">Log Out</button>
+        </div>
+    </header>
+
+    <div id="parent">
+        <div id="sidebar">
+            <button id="find"><i class="ri-search-line"></i> <span>Find</span></button>
+            <button id="assests-list"><i class="ri-file-list-3-line"></i> <span>Assets list</span></button>
+            <button id="Register-Asset"><i class="ri-registered-line"></i> <span>Register Asset</span></button>
+            <button id="Register-New-User"><i class="ri-user-add-line"></i> <span>Register New User</span></button>
+            <button id="profilee"><i id="i" class="ri-user-2-line"></i> <span>Profile</span></button>
+        </div>
+
+        <div id="content">
+            <div id="div1">
+                <div id="div2">
+                    <h1>Register New User</h1><br>
+                    <h4>Please fill the following form to register new User.</h4>
+                </div>
+                <div id="div3">
+                    <button type="submit" form="register-user-form">Register</button>
+                </div>
+            </div>
+
+            <div id="form-parent">
+                <form id="register-user-form">
+                    <div class="form-group">
+                        <label for="Employee ID">Employee ID</label>
+                        <input id="iinput" name="empId" type="text" placeholder="Enter Company or Brand... ">
+                    </div>
+                    <div class="form-group">
+                        <label for="Employee Name">Employee Name</label>
+                        <input id="iinput" name="empName" type="text" placeholder="Enter your name">
+                    </div>
+                    <div class="form-group">
+                        <label for="Email">Email</label>
+                        <input id="iinput" name="empEmail" type="email" placeholder="Eg. abc@yamato-india-ltd.in">
+                    </div>
+                    <div class="form-group">
+                        <label for="Mobile">Mobile Number</label>
+                        <input id="iinput" name="empMobile" type="text" placeholder="Enter Your Phone Number">
+                    </div>
+                    <div class="form-group">
+                        <label for="Department">Department</label>
+                        <select id="iinput" name="empDept">
+                            <option value="" disabled selected>Select Department</option>
+                            <option value="IT">IT</option>
+                            <option value="HR">HR</option>
+                            <option value="Accounts">Accounts</option>
+                            <option value="Freight Forwarding">Freight Forwarding (FF)</option>
+                            <option value="Contract Logistics">Contract Logistics (CL)</option>
+                            <option value="Finance">Finance</option>
+                            <option value="Machinery">Machinery</option>
+                            <option value="Moving">Moving</option>
+                        </select>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="Asset name">Designation</label>
+                        <select id="iinput" name="empDesg">
+                            <option value="" disabled selected>Select Designation</option>
+                            <option value="MANAGER">MANAGER</option>
+                            <option value="SENIOR MANAGER">SENIOR MANAGER</option>
+                            <option value="AGM">AGM</option>
+                            <option value="DGM">DGM</option>
+                            <option value="GENERAL MANAGER">GENERAL MANAGER</option>
+                            <option value="MANAGING DIRECTOR">MANAGING DIRECTOR</option>
+                            <option value="SENIOR EXECUTIVE">SENIOR EXECUTIVE</option>
+                            <option value="ASSISTANT MANAGER">ASSISTANT MANAGER</option>
+                            <option value="DEPUTY MANAGER">DEPUTY MANAGER</option>
+                            <option value="VICE PRESIDENT">VICE PRESIDENT</option>
+                            <option value="TRAINEE">TRAINEE</option>
+                            <option value="EXECUTIVE">EXECUTIVE</option>
+                            <option value="SUPERVISOR ">SUPERVISOR </option>
+                            <option value="SERIOR SUPERVISOR">SERIOR SUPERVISOR</option>
+                        </select>
+                    </div>
+                </form>
+            </div>  
+        </div>
+    </div>
+    <script src="/frontend/java/register new user.js"></script>
+</body>
+</html>

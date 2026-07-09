@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assets List - Asset Management Portal</title>
+    <link
+        href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css"
+        rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/frontend/css/assets list.css">
+</head>
+<body>
+    <header>
+        <div id="start">
+            <img src="/frontend/images/logo-Photoroom.png" alt="yamatoo">
+        </div>
+        <div id="contentbar">
+            <button id="home"><i class="ri-home-5-line"></i> HOME</button>
+            <button id="assets-list"><i class="ri-file-list-3-line"></i> ASSETS LIST</button>
+            <button id="inventory"><i class="ri-folder-chart-line"></i> INVENTORY</button>
+            <button id="reports"><i class="ri-dossier-line"></i> REPORTS</button>
+        </div>
+
+        <div id="profile">
+            <i id="i" class="ri-user-2-line"></i>
+            <button id="log-out">Log Out</button>
+        </div>
+    </header>
+
+    <div id="parent">
+        <div id="sidebar">
+    <button id="find">
+        <i class="ri-search-line"></i> 
+        <span>Find</span>
+    </button>
+    <button id="assests-list">
+        <i class="ri-file-list-3-line"></i> 
+        <span>Assets list</span>
+    </button>
+    <button id="Register-Asset">
+        <i class="ri-registered-line"></i> 
+        <span>Register Asset</span>
+    </button>
+    <button id="Register-New-User">
+        <i class="ri-user-add-line"></i> 
+        <span>Register New User</span>
+    </button>
+    <button id="profilee">
+        <i id="i" class="ri-user-2-line"></i>
+        <span>Profile</span>
+    </button>
+</div>
+        <div id="content">
+            <div id="search-parent">
+                <div id="search">
+                    <div id="sub">
+                        <i class="ri-search-line"></i>
+                        <input placeholder="Search... " id="table-search" type="text">
+                    </div>
+                    </div>
+                <div id="filters">
+                    <div id="filter-by-status">
+                        <select name="category" id="asset-category">
+                        <option value="">Filter By Status</option>
+                        <option value="laptops">Laptops</option>
+                        <option value="servers">Servers</option>
+                        <option value="monitors">Monitors</option>
+                        <option value="furniture">Furniture</option>
+                    </select>
+                </div>
+                    <div id="filter-by-type"><select name="category" id="asset-category">
+                        <option value="">Filter By Type</option>
+                        <option value="laptops">Laptops</option>
+                        <option value="servers">Servers</option>
+                        <option value="monitors">Monitors</option>
+                        <option value="furniture">Furniture</option>
+                    </select>
+                </div>
+                <div id="filter-by-room">
+                    <select name="category" id="asset-category">
+                        <option value="">Filter By Room</option>
+                        <option value="laptops">Laptops</option>
+                        <option value="servers">Servers</option>
+                        <option value="monitors">Monitors</option>
+                        <option value="furniture">Furniture</option>
+                    </select>
+                </div>
+                </div>
+            </div>
+            <div id="tab">
+
+                <table>
+                    <!-- The header row -->
+                    <thead>
+                    <tr>
+                        <th>Asset ID</th>
+                        <th>Item Name</th>
+                        <th>Asset Type</th>
+                        <th>Status</th>
+                        <th>Issue Date</th>
+                        <th>Asset Owner</th>
+                        <th>Email Id</th>
+                        <th>Contact</th>
+                        <th>Remarks (if any)</th>
+                        <th>Edit</th>
+                    </tr>
+                    </thead>
+
+                    <tbody id="asset-fetch">
+
+                    </tbody>
+                    <!-- Data Row 1 -->
+                </table>             
+            
+            </div>
+            </div>
+        </div>
+    </div>
+    <script src="/frontend/java/assets list.js"></script>
+</body>
+</html>

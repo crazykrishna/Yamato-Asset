@@ -1,0 +1,236 @@
+@font-face {
+    font-family: main;
+    src: url(/frontend/fonts/static/SourceCodePro-LightItalic.ttf);
+}
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: main;
+}
+
+html,body{
+    height: 100%;
+    width: 100%;
+}
+
+header{
+    width: 100%;
+    background-color: #f5cf04;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+    box-sizing: border-box;
+}
+#start img{
+    background-color: transparent;
+    width: 200px;
+}
+#contentbar{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    height: 90%;
+}
+
+#contentbar button{
+    border: 0;
+    height: 100%;
+    width: 120px;
+    background-color: transparent;
+    border-radius: 10px;
+}
+
+header #contentbar button:hover, #profile button:hover{
+    background-color: orange;
+}
+
+#profile{
+    height: 90%;
+}
+
+
+#profile button{
+    border: 0;
+    background-color: transparent;
+    height: 100%;
+    width: 80px;
+    border-radius: 10px;
+    padding-right: 10px;
+}
+
+#sidebar {
+    font-family: main;
+    height: 100%;
+    width: 80px;
+    display: flex;
+    background-color: #171717;
+    flex-direction: column;
+    align-items: flex-start; 
+    justify-content: flex-start; 
+    gap: 10px;
+    padding: 10px 5px;
+    overflow: hidden; 
+    transition: width 0.3s ease;
+    box-sizing: border-box;
+}
+
+#sidebar:hover {
+    width: 20%;
+}
+
+#sidebar button {
+    cursor: pointer;
+    border: none;
+    background-color: transparent;
+    color: white;
+    width: 100%;
+    height: 50px;
+    border-radius: 10px;
+    white-space: nowrap;
+    
+    
+    display: flex;
+    align-items: center;
+    padding: 0 15px; 
+    text-align: left;
+    transition: background-color 0.2s;
+}
+
+#sidebar button i {
+    font-size: 20px;
+    min-width: 30px;
+    display: flex;
+    justify-content: center;
+}
+
+
+#sidebar button span {
+    opacity: 0;
+    margin-left: 10px;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+}
+
+#sidebar:hover button span {
+    opacity: 1;
+}
+
+#sidebar button:hover {
+    background-color: #f5cf04;
+    color: black; 
+}
+
+#parent{
+    height: 100%;
+    width: 100%;
+    display: flex;
+}
+#content{
+    padding: 25px 20px;
+    background-color:#f4f4f4;
+    height: 100%;
+    width: 100%;
+}
+
+/* MAIN CONTENT */
+
+#search-parent{
+    margin-left: 10px;
+    width: 100%;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* background-color:pink; */
+}
+#filter-by-status,#filter-by-type{
+    height: 100%;
+    width: 150px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* background-color:red; */
+}
+#search input{
+    width: 200px;
+    height: 35px;
+    background-color: white;
+    border: 1px gray;
+    border-radius: 10px;
+}
+#search input:focus{
+    outline: none;
+    initial-value: unset;
+}
+#search{
+    display: flex;
+    justify-content: space-between;
+    /* background-color: blue; */
+    width: 100%;height: 100%;
+    align-items: center;
+}
+#sub{
+    margin-left: 10px;
+    background-color: white;
+    border-radius: 10px;
+    border: 1px solid gray;
+    
+}
+#sub i{
+    margin-left: 10px;
+    background-color: white;
+}
+select{
+    border: 0;
+    background-color: white;
+    width: 100%;
+    height: 35px;
+    border-radius: 10px;
+    border: 1px solid gray;
+}
+
+#filter-by-department,#filter-by-type{
+    width: 180px;
+}
+
+#filters{
+    display: flex;
+    width: 100%;
+    height: 100%;
+    justify-content: right;
+    align-items: center;
+    /* background-color:black; */
+    gap: 20px;
+}
+#tab{
+    display: flex;
+    
+    flex-direction: column;
+    height: 525px;
+    width: 100%;
+    background-color: transparent;
+    margin: 15px 10px;
+    overflow-x: auto;
+}
+table{
+    border: 1px solid gray;
+    border-radius: 10px;
+}
+th{
+    height: 40px;
+    background-color: rgb(196, 194, 194);
+    border-collapse: collapse;
+    border-radius: 10px;
+}
+tr{
+    height: 30px;
+    text-align: center;
+    border: 1px solid black;
+    background-color: white;
+}

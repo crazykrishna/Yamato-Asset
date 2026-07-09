@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assets Management Portal</title>
+    <link
+        href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css"
+        rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/frontend/css/reports.css">
+</head>
+<body>
+    <header>
+        <div id="start">
+            <img src="/frontend/images/logo-Photoroom.png" alt="yamatoo">
+        </div>
+        <div id="contentbar">
+            <button id="home"><i class="ri-home-5-line"></i> HOME</button>
+            <button id="assets-list"><i class="ri-file-list-3-line"></i> ASSETS LIST</button>
+            <button id="inventory"><i class="ri-folder-chart-line"></i> INVENTORY</button>
+            <button id="reports"><i class="ri-dossier-line"></i> REPORTS</button>
+        </div>
+
+        <div id="profile">
+            <i id="i" class="ri-user-2-line"></i>
+            <button id="log-out">Log Out</button>
+        </div>
+    </header>
+
+    <div id="parent">
+        <div id="sidebar">
+    <button id="find">
+        <i class="ri-search-line"></i> 
+        <span>Find</span>
+    </button>
+    <button id="assests-list">
+        <i class="ri-file-list-3-line"></i> 
+        <span>Assets list</span>
+    </button>
+    <button id="Register-Asset">
+        <i class="ri-registered-line"></i> 
+        <span>Register Asset</span>
+    </button>
+    <button id="Register-New-User">
+        <i class="ri-user-add-line"></i> 
+        <span>Register New User</span>
+    </button>
+    <button id="profilee">
+        <i id="i" class="ri-user-2-line"></i>
+        <span>Profile</span>
+    </button>
+</div>
+        <div id="content">
+            <h1>System Reports & Analytics</h1>
+            <div id="parent-1">
+                <div id="graph">
+                    <div id="titlee">
+                        <h4>Asset Depreciation (This Year)</h4>
+                        <div id="seelect">
+                            <select name="Generate" id="generate-report-dd">
+                            <option value="">Generate Report</option>
+                            <option value="Year">This Year</option>
+                            <option value="$">Last 5yr</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="main-graph">
+
+                    </div>
+                </div>
+                <div id="value">
+                    <h4>Total Inventory Value</h4>
+                    <div id="paisa"><h1>₹12,00,000</h1></div>
+                </div>
+                </div>
+            <div id="parent-2">
+                <h4>Available Report Templates</h4>
+                <div id="list">
+                    <div id="sub-1">
+                        <i class="ri-file-list-2-line"></i> Asset Audit trial
+                    </div>
+
+                    <div class="sub">
+                        <button class="special">Generate Reports</button>
+                        <button class="svg">Convert To SVG</button>
+                    </div>
+                </div>
+
+                <div id="list">
+                    <div id="sub-1">
+                        <i class="ri-file-list-2-line"></i> Maintainence Schedule
+                    </div>
+
+                    <div class="sub">
+                        <button class="special">Generate Reports</button>
+                        <button class="svg">Convert To SVG</button>
+                    </div>
+                </div>
+
+                <div id="list">
+                    <div id="sub-1">
+                        <i class="ri-file-list-2-line"></i> User Activity Log
+                    </div>
+
+                    <div class="sub">
+                        <button class="special">Generate Reports</button>
+                        <button class="svg">Convert To SVG</button>
+                    </div>
+                </div>
+
+                <div id="list">
+                    <div id="sub-1">
+                        <i class="ri-file-list-2-line"></i> Check-out History
+                    </div>
+
+                    <div class="sub">
+                        <button class="special">Generate Reports</button>
+                        <button class="svg">Convert To SVG</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+            
+        </div>
+    </div>
+    <script src="/frontend/java/default.js"></script>
+</body>
+</html>

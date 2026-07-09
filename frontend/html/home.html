@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="/frontend/css/home.css">
+    <link
+        href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css"
+        rel="stylesheet"
+    />
+</head>
+<body>
+    <!-- DEFAULT HTML -->
+    <header>
+        <div id="start">
+            <img src="/frontend/images/logo-Photoroom.png" alt="yamatoo">
+        </div>
+        <div id="contentbar">
+            <button id="home"><i class="ri-home-5-line"></i> HOME</button>
+            <button id="assets-list"><i class="ri-file-list-3-line"></i> ASSETS LIST</button>
+            <button id="inventory"><i class="ri-folder-chart-line"></i> INVENTORY</button>
+            <button id="reports"><i class="ri-dossier-line"></i> REPORTS</button>
+        </div>
+
+        <div id="profile">
+            <i id="i" class="ri-user-2-line"></i>
+            <button id="log-out">Log Out</button>
+        </div>
+    </header>
+
+    <div id="parent">
+        <div id="sidebar">
+    <button id="find">
+        <i class="ri-search-line"></i> 
+        <span>Find</span>
+    </button>
+    <button id="assests-list">
+        <i class="ri-file-list-3-line"></i> 
+        <span>Assets list</span>
+    </button>
+    <button id="Register-Asset">
+        <i class="ri-registered-line"></i> 
+        <span>Register Asset</span>
+    </button>
+    <button id="Register-New-User">
+        <i class="ri-user-add-line"></i> 
+        <span>Register New User</span>
+    </button>
+    <button id="profilee">
+        <i id="i" class="ri-user-2-line"></i>
+        <span>Profile</span>
+    </button>
+</div>
+
+        <!-- MAIN PAGE -->
+
+        <div id="content">
+            <h2>Good Morning, Admin 😊</h2>
+            <h4 style="margin-top: 5px;">Welcome to Asset Management.</h4>
+            <div id="top">
+                <div id="total-Assets">
+                    <h4>Total Assets</h4><br>
+                    <h1>40</h1>
+                </div>
+                <div id="recents">
+                    <h4>Recent Activity</h4><br>
+                    <h1>30</h1>
+                </div>
+                <div id="total-reported">
+                    <h4>Total Reported</h4><br>
+                    <h1>05</h1>
+                </div>
+            </div>
+            <div id="graph">
+                <h1>Assets Status</h1>
+                <div id="back">
+                    <div id="front">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/frontend/java/home.js"></script>
+</body>
+</html>
