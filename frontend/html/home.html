@@ -30,57 +30,56 @@
     </header>
 
     <div id="parent">
-        <div id="sidebar">
-    <button id="find">
-        <i class="ri-search-line"></i> 
-        <span>Find</span>
-    </button>
-    <button id="assests-list">
-        <i class="ri-file-list-3-line"></i> 
-        <span>Assets list</span>
-    </button>
-    <button id="Register-Asset">
-        <i class="ri-registered-line"></i> 
-        <span>Register Asset</span>
-    </button>
-    <button id="Register-New-User">
-        <i class="ri-user-add-line"></i> 
-        <span>Register New User</span>
-    </button>
-    <button id="profilee">
-        <i id="i" class="ri-user-2-line"></i>
-        <span>Profile</span>
-    </button>
+            <div id="sidebar">
+        <button id="find">
+            <i class="ri-search-line"></i> 
+            <span>Find</span>
+        </button>
+        <button id="assests-list">
+            <i class="ri-file-list-3-line"></i> 
+            <span>Assets list</span>
+        </button>
+        <button id="Register-Asset">
+            <i class="ri-registered-line"></i> 
+            <span>Register Asset</span>
+        </button>
+        <button id="Register-New-User">
+            <i class="ri-user-add-line"></i> 
+            <span>Register New User</span>
+        </button>
+        <button id="profilee">
+            <i id="i" class="ri-user-2-line"></i>
+            <span>Profile</span>
+        </button>
 </div>
 
         <!-- MAIN PAGE -->
 
         <div id="content">
-            <h2>Good Morning, Admin 😊</h2>
-            <h4 style="margin-top: 5px;">Welcome to Asset Management.</h4>
+            <h2 id="show">Good Morning, Admin 😊</h2>
+            <h4 style="margin-top: 5px;" id="sub-heading">Welcome to Asset Management.</h4>
             <div id="top">
                 <div id="total-Assets">
                     <h4>Total Assets</h4><br>
-                    <h1>40</h1>
+                    <h1 id="total-assets-count">40</h1>
                 </div>
                 <div id="recents">
-                    <h4>Recent Activity</h4><br>
-                    <h1>30</h1>
+                    <h4>Current Active</h4><br>
+                    <h1 id="active-assets-count">30</h1>
                 </div>
-                <div id="total-reported">
-                    <h4>Total Reported</h4><br>
-                    <h1>05</h1>
+                <div id="total-rebported">
+                    <h4>Total Categories</h4><br>
+                    <h1 id="total-categories-count">02</h1>
                 </div>
-            </div>
-            <div id="graph">
-                <h1>Assets Status</h1>
-                <div id="back">
-                    <div id="front">
+                </div>
+                <div id="graph">
+                    <div style="position: relative; width: 100%; height: 100%;">
+                        <canvas id="assetStatusChart"></canvas>
                     </div>
-                </div>
             </div>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="/frontend/java/home.js"></script>
 </body>
 </html>

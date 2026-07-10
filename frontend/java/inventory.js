@@ -1,7 +1,7 @@
-// Change this to 'http://localhost:8000/api/regAssets' if this file is for your Assets List page!
-const api_url = 'http://localhost:8000/api/regAssets';
+// Connected directly to your unified registeredassets core engine 
+const api_url = 'http://127.0.0.1:8000/api/assets';
 
-// SAFE NAVIGATION LISTENERS: Optional chaining (?.) prevents crashes if a button isn't on the current page
+// SAFE NAVIGATION LISTENERS
 document.getElementById('home')?.addEventListener("click", () => { window.location.href = "home.html"; });
 document.getElementById('assets-list')?.addEventListener("click", () => { window.location.href = "assets list.html"; });
 document.getElementById('inventory')?.addEventListener("click", () => { window.location.href = "inventory.html"; });
@@ -16,15 +16,15 @@ document.getElementById('assests-list')?.addEventListener("click", () => { windo
 document.getElementById('Register-New-User')?.addEventListener("click", () => { window.location.href = "register new user.html"; });
 document.getElementById('profilee')?.addEventListener("click", () => { window.location.href = "profile.html"; });
 
-// DYNAMIC FILTER ENGINE
+// REFACTORED UNIVERSAL CLIENT SEARCH & DROP FILTER ENGINE
 function filterTable() {
     const searchinput = document.getElementById('table-search');
     const searchFilter = searchinput ? searchinput.value.toLowerCase() : "";
 
-    const selects = document.querySelectorAll('#filters select');
-    const categoryFilter = selects[0] ? selects[0].value.toLowerCase() : "";
-    const typeFilter = selects[1] ? selects[1].value.toLowerCase() : "";
-    const statusFilter = selects[2] ? selects[2].value.toLowerCase() : "";
+    // Gathers selections across your select element nodes
+    const selectStatus = document.querySelector('#filter-by-status select')?.value.toLowerCase() || "";
+    const selectDept = document.querySelector('#filter-by-department select')?.value.toLowerCase() || "";
+    const selectType = document.querySelector('#filter-by-type select')?.value.toLowerCase() || "";
 
     const tablebody = document.getElementById('asset-fetch');
     if (!tablebody) return;
@@ -33,17 +33,18 @@ function filterTable() {
     for (let i = 0; i < rows.length; i++) {
         const row = rows[i];
         const rowText = row.textContent.toLowerCase();
-        
-        // Robust Fallback: Checks all cells or extracts text content safely
-        const assetTypeCell = row.querySelector('[data-field="asset_type"]')?.textContent.toLowerCase() || "";
-        const statusCell = row.querySelector('[data-field="status"]')?.textContent.toLowerCase() || "";
 
-        const matchesCategory = !categoryFilter || rowText.includes(categoryFilter);
-        const matchesType = !typeFilter || assetTypeCell.includes(typeFilter);
-        const matchesStatus = !statusFilter || statusCell.includes(statusFilter);
+        // Checks specific tracking column coordinates safely via data attributes
+        const assetTypeCell = row.querySelector('[data-field*="type"]')?.textContent.toLowerCase() || "";
+        const statusCell = row.querySelector('[data-field*="status"]')?.textContent.toLowerCase() || "";
+
         const matchesSearch = !searchFilter || rowText.includes(searchFilter);
+        const matchesStatus = !selectStatus || statusCell.includes(selectStatus);
+        const matchesType = !selectType || assetTypeCell.includes(selectType);
+        // Department fallback text checking
+        const matchesDept = !selectDept || rowText.includes(selectDept);
 
-        if (matchesCategory && matchesType && matchesStatus && matchesSearch) {
+        if (matchesSearch && matchesStatus && matchesType && matchesDept) {
             row.style.display = "";
         } else {
             row.style.display = "none";
@@ -51,61 +52,97 @@ function filterTable() {
     }
 }
 
-// Attach filtering events safely
+// Bind universal handlers safely
 document.querySelectorAll('#filters select').forEach(select => {
     select.addEventListener('change', filterTable);
 });
 document.getElementById('table-search')?.addEventListener('input', filterTable);
 
-// UPGRADED MUTATION ROW AGGREGATOR
+// FETCH RUNTIME LOGIC
 async function fetchAssets() {
     try {
-        console.log("Fetching data from: ", api_url);
         const response = await fetch(api_url);
         if (!response.ok) throw new Error(`Network error: ${response.status}`);
 
         const assets = await response.json();
-        const tablebody = document.getElementById('asset-fetch');
-        if (!tablebody) {
-            console.error("Target container DOM element '#asset-fetch' could not be found.");
-            return;
-        }
-
-        tablebody.innerHTML = '';
-
-        assets.forEach(asset => {
-            const row = document.createElement('tr');
-            // Safely map primary key depending on table casing conventions (assetId vs assetid)
-            const currentId = asset.assetId || asset.assetid || '';
-            row.dataset.id = currentId; 
-
-            row.innerHTML = `
-                <td>${currentId || 'N/A'}</td>
-                <td class="editable" data-field="name">${asset.name || asset.asset_name || 'N/A'}</td>
-                <td class="editable" data-field="serialNo">${asset.serialNo || asset.serialno || 'N/A'}</td>
-                <td class="editable" data-field="purchase_date">${asset.purchase_date ? asset.purchase_date.substring(0, 10) : 'N/A'}</td>
-                <td class="editable" data-field="asset_type">${asset.asset_type || 'N/A'}</td>
-                <td class="editable" data-field="status">${asset.status || 'N/A'}</td>
-                <td class="editable" data-field="remarks">${asset.Remarks || asset.remarks || ''}</td>
-                <td>
-                    <i class="ri-edit-line edit-btn" style="cursor:pointer; margin-right:8px; color:#0056b3;"></i>
-                    <i class="ri-save-line save-btn" style="cursor:pointer; color:green; display:none;"></i>
-                </td>
-            `;
-            tablebody.appendChild(row);
-        });
-
-        attachActionListeners();
-
+        renderDynamicInventoryTable(assets);
     } catch (error) {
         console.error('Data loading sequence failed:', error);
     }
 }
 
+// DYNAMIC INVENTORY GRID CONSTRUCTOR
+function renderDynamicInventoryTable(assets) {
+    const tableHeader = document.getElementById('gridHeader'); 
+    const tableBody = document.getElementById('asset-fetch');
+
+    if (!tableHeader || !tableBody) return;
+
+    tableHeader.innerHTML = "";
+    tableBody.innerHTML = "";
+
+    if (!assets || assets.length === 0) {
+        tableBody.innerHTML = "<tr><td colspan='100%'>No inventory records found. Please upload your spreadsheet from your Profile page.</td></tr>";
+        return;
+    }
+
+    // 1. Extract spreadsheet columns dynamically
+    const columns = Object.keys(assets[0]);
+
+    // 2. Render Header Nodes
+    const headerRow = document.createElement('tr');
+    columns.forEach(col => {
+        const th = document.createElement('th');
+        th.innerText = col.toUpperCase().replace(/_/g, " ");
+        headerRow.appendChild(th);
+    });
+    
+    const actionTh = document.createElement('th');
+    actionTh.innerText = "ACTIONS";
+    headerRow.appendChild(actionTh);
+    tableHeader.appendChild(headerRow);
+
+    // 3. Render Cell Node Row Iterations
+    assets.forEach(asset => {
+        const row = document.createElement('tr');
+        const currentId = asset.assetId || asset.assetid || '';
+        row.dataset.id = currentId; 
+
+        columns.forEach(col => {
+            const td = document.createElement('td');
+            let cellValue = asset[col] !== null && asset[col] !== undefined ? asset[col] : "";
+            
+            // Clean date fields cleanly if they contain ISO timestamps
+            if (col.toLowerCase().includes('date') && cellValue.length > 10) {
+                cellValue = cellValue.substring(0, 10);
+            }
+
+            td.innerText = cellValue;
+            
+            // Allow all columns except ID primary keys to be edited
+            if (col !== 'assetId' && col !== 'assetid') {
+                td.classList.add('editable');
+                td.setAttribute('data-field', col);
+            }
+            row.appendChild(td);
+        });
+
+        const actionTd = document.createElement('td');
+        actionTd.innerHTML = `
+            <i class="ri-edit-line edit-btn" style="cursor:pointer; margin-right:8px; color:#0056b3;"></i>
+            <i class="ri-save-line save-btn" style="cursor:pointer; color:green; display:none;"></i>
+        `;
+        row.appendChild(actionTd);
+        tableBody.appendChild(row);
+    });
+
+    attachActionListeners();
+}
+
 function attachActionListeners() {
-    // 1. Edit Mode Activation
+    // 1. Edit Action Configuration
     document.querySelectorAll('.edit-btn').forEach(btn => {
-        btn.replaceWith(btn.cloneNode(true)); // Wipe stale references cleanly
+        btn.replaceWith(btn.cloneNode(true));
     });
     
     document.querySelectorAll('.edit-btn').forEach(btn => {
@@ -124,7 +161,7 @@ function attachActionListeners() {
         });
     });
 
-    // 2. Save Mode Persist Transactions
+    // 2. Save Transaction Payload Handler
     document.querySelectorAll('.save-btn').forEach(btn => {
         btn.replaceWith(btn.cloneNode(true));
     });
@@ -138,10 +175,13 @@ function attachActionListeners() {
 
             const updatedData = { assetId: parseInt(id) || id };
 
+            // Inside your save button click listener rule:
             row.querySelectorAll('.editable').forEach(cell => {
-                const fieldName = cell.dataset.field;
-                const inputValue = cell.querySelector('input').value;
-                updatedData[fieldName] = inputValue;
+                const fieldName = cell.dataset.field; // This contains the exact lowercase column name from your Excel!
+                const inputElement = cell.querySelector('input');
+                const inputValue = inputElement ? inputElement.value.trim() : cell.innerText.trim();
+                
+                updatedData[fieldName] = inputValue; // Packages it dynamically into the payload dictionary
                 cell.innerText = inputValue || 'N/A';
             });
 
@@ -153,16 +193,16 @@ function attachActionListeners() {
                 });
 
                 if (response.ok) {
-                    alert("Record saved successfully!");
+                    alert("Changes committed to your currentassets database table successfully!");
                     editBtn.style.display = "inline-block";
                     saveBtn.style.display = "none";
                 } else {
                     const err = await response.json();
                     alert("Failed to commit changes: " + (err.detail || "Server error"));
-                    fetchAssets(); // Refresh grid layout on validation error
+                    fetchAssets(); 
                 }
             } catch (error) {
-                console.error("Transmission breakdown during save:", error);
+                console.error("Transmission error:", error);
                 alert("Could not process persistence request.");
                 fetchAssets();
             }
@@ -170,5 +210,5 @@ function attachActionListeners() {
     });
 }
 
-// Launch application rendering routine
 window.addEventListener('DOMContentLoaded', fetchAssets);
+

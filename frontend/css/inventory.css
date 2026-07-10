@@ -1,6 +1,7 @@
 @font-face {
     font-family: main;
-    src: url(/frontend/fonts/static/SourceCodePro-LightItalic.ttf);
+    src: url(/frontend/fonts/IBM_PLEX_SERIF/IBMPlexSerif-Light.ttf);
+
 }
 
 *{

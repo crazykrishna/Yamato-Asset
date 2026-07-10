@@ -13,13 +13,15 @@ document.getElementById('assests-list')?.addEventListener("click",() => { window
 document.getElementById('Register-New-User')?.addEventListener("click",() => { window.location.href = "register new user.html"; });
 document.getElementById('profilee')?.addEventListener("click",() => { window.location.href = "profile.html"; });
 
-const api_url = 'http://localhost:8000/api/assigned-assets';
+const api_url = 'http://127.0.0.1:8000/api/regAssets';
 const searchinput = document.getElementById('table-search');
 
+// Search Bar Client Filtering logic
 if (searchinput){
     searchinput.addEventListener('input', (event) => {
         const searchitem = event.target.value.toLowerCase();
-        const tablebody = document.getElementById('asset-fetch');
+        const tablebody = document.getElementById('gridBody'); // Updated to point to dynamic body ID
+        if (!tablebody) return;
         const rows = tablebody.getElementsByTagName('tr');
 
         for (let i = 0; i < rows.length; i++){
@@ -34,52 +36,88 @@ if (searchinput){
     });
 }
 
-// Render dynamic table rows
+// RESTORED & FIXED: Core data engine to fetch current metrics and invoke dynamic parsing
 async function fetchAssets() {
     try {
         const response = await fetch(api_url);
         if (!response.ok) throw new Error("Network response was not OK");
 
         const assets = await response.json();
-        const tablebody = document.getElementById('asset-fetch');
-        if (!tablebody) return;
-
-        tablebody.innerHTML = '';
-
-        assets.forEach(asset => {
-            const row = document.createElement('tr');
-            // Safely fall back if columns are returned lowercase or mixed-case
-            const currentId = asset.assetId || asset.assetid;
-            row.dataset.id = currentId; 
-
-            row.innerHTML = `
-                <td>${currentId || 'N/A'}</td>
-                <td class="editable" data-field="name">${asset.asset_name || asset.name || 'N/A'}</td>
-                <td class="editable" data-fi eld="asset_type">${asset.asset_type || 'N/A'}</td>
-                <td class="editable" data-field="status">${asset.status || 'N/A'}</td>
-                <td class="editable" data-field="purchase_date">${asset.purchase_date || 'N/A'}</td>
-                <td class="editable" data-field="employee_name">${asset.employee_name || 'N/A'}</td>
-                <td data-field="email">${asset.email || 'N/A'}</td>
-                <td data-field="phone_number">${asset.phone_number || 'N/A'}</td>
-                <td class="editable" data-field="remarks">${asset.remarks || asset.Remarks || ''}</td>
-                <td>
-                    <i class="ri-edit-line edit-btn" style="cursor:pointer; margin-right:8px; color:#0056b3;"></i>
-                    <i class="ri-save-line save-btn" style="cursor:pointer; color:green; display:none;"></i>
-                </td>
-            `;
-            tablebody.appendChild(row);
-        });
-
-        attachActionListeners();
+        renderDynamicAssetTable(assets); // Feeds raw array straight to the dynamic renderer
     } catch (error) {
         console.error('Error fetching data:', error);
     }
 }
 
+// Dynamic Table Generator
+function renderDynamicAssetTable(assets) {
+    const tableHeader = document.getElementById('gridHeader'); 
+    const tableBody = document.getElementById('gridBody');
+
+    if (!tableHeader || !tableBody) return;
+
+    // Clear out old headers and rows completely
+    tableHeader.innerHTML = "";
+    tableBody.innerHTML = "";
+
+    if (!assets || assets.length === 0) {
+        tableBody.innerHTML = "<tr><td colspan='100%'>No asset records found. Please upload a spreadsheet from your Profile.</td></tr>";
+        return;
+    }
+
+    // 1. Grab columns dynamically based on first data object attributes
+    const columns = Object.keys(assets[0]);
+
+    // 2. Render headers line items
+    const headerRow = document.createElement('tr');
+    columns.forEach(col => {
+        const th = document.createElement('th');
+        th.innerText = col.toUpperCase().replace(/_/g, " ");
+        headerRow.appendChild(th);
+    });
+    
+    const actionTh = document.createElement('th');
+    actionTh.innerText = "ACTIONS";
+    headerRow.appendChild(actionTh);
+    tableHeader.appendChild(headerRow);
+
+    // 3. Render matching dynamic cell configurations
+    assets.forEach(asset => {
+        const row = document.createElement('tr');
+        const currentId = asset.assetId || asset.assetid || '';
+        
+        row.dataset.id = currentId;
+        // FIXED: Binding reference variable to row DOM context so update mapping can track changes
+        row.dataset.employeeRef = asset.employee_name || ''; 
+
+        columns.forEach(col => {
+            const td = document.createElement('td');
+            td.innerText = asset[col] !== null && asset[col] !== undefined ? asset[col] : "";
+            
+            // Assign edit markers to parameters unless restricted explicitly
+            if (col !== 'email' && col !== 'phone_number' && col !== 'assetId' && col !== 'assetid') {
+                td.classList.add('editable');
+                td.setAttribute('data-field', col);
+            }
+            row.appendChild(td);
+        });
+
+        const actionTd = document.createElement('td');
+        actionTd.innerHTML = `
+            <i class="ri-edit-line edit-btn" style="cursor:pointer; margin-right:8px; color:#0056b3;"></i>
+            <i class="ri-save-line save-btn" style="cursor:pointer; color:green; display:none;"></i>
+        `;
+        row.appendChild(actionTd);
+        tableBody.appendChild(row);
+    });
+
+    // Fire listeners trigger bound to fresh elements
+    attachActionListeners();
+}
+
 function attachActionListeners() {
-    // 1. Edit Action Triggered
+    // 1. Edit Mode Configuration
     document.querySelectorAll('.edit-btn').forEach(btn => {
-        // Clear out old click listener duplicates to avoid messy stacking
         btn.replaceWith(btn.cloneNode(true));
     });
     
@@ -89,19 +127,17 @@ function attachActionListeners() {
             const editBtn = row.querySelector('.edit-btn');
             const saveBtn = row.querySelector('.save-btn');
 
-            // Turn all marked cells in this specific row into active input textboxes
             row.querySelectorAll('.editable').forEach(cell => {
                 const currentText = cell.innerText === 'N/A' ? '' : cell.innerText;
                 cell.innerHTML = `<input type="text" value="${currentText}" style="width:90%; padding:4px;"/>`;
             });
 
-            // Toggle tool icons smoothly
             editBtn.style.display = "none";
             saveBtn.style.display = "inline-block";
         });
     });
 
-    // 2. Save Action Triggered
+    // 2. Save Action Submission logic
     document.querySelectorAll('.save-btn').forEach(btn => {
         btn.replaceWith(btn.cloneNode(true));
     });
@@ -110,43 +146,41 @@ function attachActionListeners() {
         btn.addEventListener('click', async (e) => {
             const row = e.target.closest('tr');
             const id = row.dataset.id;
-            const employeeRef = row.dataset.employeeRef; // Reference data for cross-db update
+            const employeeRef = row.dataset.employeeRef; 
             const editBtn = row.querySelector('.edit-btn');
             const saveBtn = row.querySelector('.save-btn');
 
-            // Ensure this dataset field assignment is configured properly in your save-btn block
             const updatedData = { 
                 assetId: parseInt(id) || id,
                 originalEmployeeName: employeeRef || '',
-                
-                // Grabs what you type into the 'Asset Owner' cell and submits it as employee_name
-                employee_name: row.querySelector('[data-field="employee_name"] input')?.value.trim() || row.querySelector('[data-field="employee_name"]').innerText.trim()
+                employee_name: '' 
             };
 
-            // Read edited string values out from your modified inputs
+            // Process text modifications out of row elements input boxes
             row.querySelectorAll('.editable').forEach(cell => {
                 const fieldName = cell.dataset.field;
-                const inputValue = cell.querySelector('input').value.trim();
-                updatedData[fieldName] = inputValue;
+                const inputNode = cell.querySelector('input');
+                const inputValue = inputNode ? inputNode.value.trim() : cell.innerText.trim();
                 
-                // Instantly update UI visually to display the text value early
+                updatedData[fieldName] = inputValue;
                 cell.innerText = inputValue || 'N/A';
             });
 
-            // Locate this block inside your save-btn click event listener in assets list.js:
+            // Make sure the custom field points to the dynamic attribute key
+            updatedData.employee_name = updatedData.employee_name || updatedData.employeeName || '';
+
             try {
-                // FIXED: Appending ?assetId= to the URL path to satisfy any strict query validations
                 const response = await fetch(`http://127.0.0.1:8000/api/assigned-assets/update?assetId=${updatedData.assetId}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(updatedData) // Still sending the complete object payload here
+                    body: JSON.stringify(updatedData)
                 });
 
                 if (response.ok) {
                     alert("Record saved successfully across both databases!");
                     editBtn.style.display = "inline-block";
                     saveBtn.style.display = "none";
-                    fetchAssets(); 
+                    fetchAssets(); // Refresh active query table state
                 } else {
                     const err = await response.json();
                     alert("Failed to commit changes: " + JSON.stringify(err.detail || err));

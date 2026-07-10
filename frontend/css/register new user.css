@@ -1,12 +1,13 @@
 @font-face {
     font-family: main;
-    src: url(/frontend/fonts/Caveat/Caveat-VariableFont_wght.ttf);
+    src: url(/frontend/fonts/IBM_PLEX_SERIF/IBMPlexSerif-Light.ttf);
 }
 
 *{
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: main;
 }
 html,body{
     height: 100%;

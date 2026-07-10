@@ -4,14 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inventory - Assets Management Portal</title>
-    <link
-        href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css"
-        rel="stylesheet"
-    />
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css" rel="stylesheet"/>
     <link rel="stylesheet" href="/frontend/css/inventory.css">
 </head>
 <body>
-<header>
+    <header>
         <div id="start">
             <img src="/frontend/images/logo-Photoroom.png" alt="yamatoo">
         </div>
@@ -21,7 +18,6 @@
             <button id="inventory"><i class="ri-folder-chart-line"></i> INVENTORY</button>
             <button id="reports"><i class="ri-dossier-line"></i> REPORTS</button>
         </div>
-
         <div id="profile">
             <i id="i" class="ri-user-2-line"></i>
             <button id="log-out">Log Out</button>
@@ -30,48 +26,36 @@
 
     <div id="parent">
         <div id="sidebar">
-    <button id="find">
-        <i class="ri-search-line"></i> 
-        <span>Find</span>
-    </button>
-    <button id="assests-list">
-        <i class="ri-file-list-3-line"></i> 
-        <span>Assets list</span>
-    </button>
-    <button id="Register-Asset">
-        <i class="ri-registered-line"></i> 
-        <span>Register Asset</span>
-    </button>
-    <button id="Register-New-User">
-        <i class="ri-user-add-line"></i> 
-        <span>Register New User</span>
-    </button>
-    <button id="profilee">
-        <i id="i" class="ri-user-2-line"></i>
-        <span>Profile</span>
-    </button>
-</div>
+            <button id="find"><i class="ri-search-line"></i> <span>Find</span></button>
+            <button id="assests-list"><i class="ri-file-list-3-line"></i> <span>Assets list</span></button>
+            <button id="Register-Asset"><i class="ri-registered-line"></i> <span>Register Asset</span></button>
+            <button id="Register-New-User"><i class="ri-user-add-line"></i> <span>Register New User</span></button>
+            <button id="profilee"><i id="i" class="ri-user-2-line"></i> <span>Profile</span></button>
+        </div>
+        
         <div id="content">
             <div id="search-parent">
                 <div id="search">
-                    <h2>Inventory List</h1>
+                    <h2>Inventory List</h2>
                     <div id="sub">
                         <i class="ri-search-line"></i>
                         <input placeholder="Search... " id="table-search" type="text">
                     </div>
-                    </div>
+                </div>
                 <div id="filters">
                     <div id="filter-by-status">
-                        <select name="category" id="asset-category">
-                        <option value="" disabled selected>Status</option>
-                        <option value="Active">Active/working</option>
-                        <option value="Inactive">Inactive</option>
-                        <option value="Broken">Broken</option>
-                        <option value="Need Repair">Need Repair</option>
-                    </select>
-                </div>
-                    <div id="filter-by-department"><select name="category" id="asset-category">
-                        <option value="" disabled selected>Select Department</option>
+                        <select name="category">
+                            <option value="">All Statuses</option>
+                            <option value="In Use">In Use</option>
+                            <option value="Active">Active/working</option>
+                            <option value="Inactive">Inactive</option>
+                            <option value="Broken">Broken</option>
+                            <option value="Need Repair">Need Repair</option>
+                        </select>
+                    </div>
+                    <div id="filter-by-department">
+                        <select name="category">
+                            <option value="">All Departments</option>
                             <option value="IT">IT</option>
                             <option value="HR">HR</option>
                             <option value="Accounts">Accounts</option>
@@ -80,42 +64,26 @@
                             <option value="Finance">Finance</option>
                             <option value="Machinery">Machinery</option>
                             <option value="Moving">Moving</option>
-                    </select>
-                </div>
-                <div id="filter-by-type">
-                    <select name="category" id="asset-category">
-                        <option value="" selected disabled>Type</option>
-                        <option value="laptop">Laptop</option>
-                        <option value="servers">Server</option>
-                        <option value="monitors">Monitor</option>
-                        <option value="furniture">Furniture</option>
-                    </select>
-                </div>
+                        </select>
+                    </div>
+                    <div id="filter-by-type">
+                        <select name="category">
+                            <option value="">All Types</option>
+                            <option value="laptop">Laptop</option>
+                            <option value="server">Server</option>
+                            <option value="monitor">Monitor</option>
+                            <option value="printer">Printer</option>
+                            <option value="furniture">Furniture</option>
+                        </select>
+                    </div>
                 </div>
             </div>
-            <div id="tab">
-
+            
+            <div id="tab" style="overflow-x: auto; margin-top: 20px;">
                 <table>
-                    <thead>
-                        <tr>
-                            <th>Asset ID</th>
-                            <th>Item Name</th>
-                            <th>Serial no.</th>
-                            <th>Purchase Date</th>
-                            <th>Asset Type</th>
-                            <th>Status</th>
-                            <th>Remarks (if any)</th>
-                            <th>Edit</th>
-                        </tr>
-                    </thead>
-                    <!-- Data Row 1 -->
-                    <tbody id="asset-fetch">
-                        <td><i class="ri-edit-line"></i> <i class="ri-eye-line"></i></td>
-                    </tr>
-
-                    </tbody>
+                    <thead id="gridHeader"></thead>
+                    <tbody id="asset-fetch"></tbody>
                 </table>
-            </div>
             </div>
         </div>
     </div>

@@ -1,17 +1,124 @@
 @font-face {
     font-family: main;
-    src: url(/frontend/fonts/Caveat/Caveat-VariableFont_wght.ttf);
+    src: url(/frontend/fonts/IBM_PLEX_SERIF/IBMPlexSerif-Light.ttf);
 }
 
 *{
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: main;
 }
 html,body{
     height: 100%;
     width: 100%;
 }
+
+/* Custom Modal Screen Overlay Frame */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent dark background */
+    backdrop-filter: blur(4px);            /* Smooth background blur */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;                        /* Keeps it floating over everything else */
+}
+
+/* Modal Content Card Window Box */
+.modal-content {
+    background-color: white;
+    width: 450px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    padding: 25px;
+    animation: scaleUp 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-sizing: border-box;
+}
+
+@keyframes scaleUp {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+/* Ensure the wrapper stacks correctly */
+.password-wrapper {
+    position: relative;
+    width: 100%;
+    margin-top: 5px;
+}
+
+/* Updated input rule with right padding to clear the eye icon area */
+#modal-password-input {
+    width: 100%;
+    height: 40px;
+    padding: 10px;
+    padding-right: 40px; /* CRUCIAL: Leaves 40px of blank area on the right so text doesn't hit the eye */
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    outline: none;
+    box-sizing: border-box;
+}
+#modal-password-input:focus {
+    border-color: #ff4d4d;
+}
+
+#modal-password-input {
+    width: 100%;
+    height: 40px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    margin-top: 5px;
+    outline: none;
+}
+#modal-password-input:focus {
+    border-color: #f5cf04;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 25px;
+}
+
+/* Generic Modal Control Actions Buttons */
+.m-btn {
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.btn-cancel {
+    background-color: #f1f2f6;
+    color: #2f3542;
+}
+.btn-cancel:hover { background-color: #dfe4ea; }
+
+.btn-confirm {
+    background-color: #ff4d4d;
+    color: white;
+}
+.btn-confirm:hover { background-color: #ff3333; }
 
 header{
     width: 100%;

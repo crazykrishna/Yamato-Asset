@@ -1,6 +1,7 @@
 @font-face {
     font-family: main;
-    src: url(/frontend/fonts/static/SourceCodePro-LightItalic.ttf);
+    src: url(/frontend/fonts/IBM_PLEX_SERIF/IBMPlexSerif-Light.ttf);
+
 }
 
 *{
@@ -203,11 +204,13 @@ select{
     overflow-y: auto;
 }
 table{
+    width: 100%;
     border: 1px solid gray;
     border-radius: 10px;
 }
 th{
     height: 40px;
+    padding: 0 10px;
     background-color: rgb(196, 194, 194);
     border-collapse: collapse;
     border-radius: 10px;
