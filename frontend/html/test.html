@@ -3,71 +3,286 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Yamato Assets Management System</title>
+    <style>
+        @font-face {
+            font-family: 'Montserrat';
+            src: url(/frontend/fonts/Montserrat/Montserrat-Italic-VariableFont_wght.ttf);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            font-family: 'Montserrat', sans-serif;
+            overflow: hidden;
+        }
+
+        /* ── Full-page background video ── */
+        #bg-video {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover;
+            z-index: 0;
+        }
+
+        /* Dark overlay over the page video */
+        #bg-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(5, 10, 20, 0.65);
+            z-index: 1;
+        }
+
+        /* ── Page layout ── */
+        #page {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            gap: 24px;
+            padding: 20px;
+            animation: fadeInPage 1s ease forwards;
+        }
+
+        @keyframes fadeInPage {
+            from { opacity: 0; transform: translateY(18px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── Logo ── */
+        #logo-img {
+            height: 90px;
+            filter: drop-shadow(0 0 18px rgba(245, 207, 4, 0.6));
+            animation: floatLogo 4s ease-in-out infinite;
+        }
+
+        @keyframes floatLogo {
+            0%, 100% { transform: translateY(0); }
+            50%       { transform: translateY(-6px); }
+        }
+
+        /* ── Card ── */
+        .card {
+            position: relative;
+            width: 400px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow:
+                0 0 0 1px rgba(245, 207, 4, 0.25),
+                0 25px 60px rgba(0, 0, 0, 0.6),
+                0 0 40px rgba(245, 207, 4, 0.08);
+        }
+
+        /* Video inside the card */
+        .card-video {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+        }
+
+        /* Semi-transparent overlay on card video */
+        .card-overlay {
+            position: relative;
+            z-index: 1;
+            background: rgba(8, 14, 30, 0.72);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            padding: 40px 36px 36px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* ── Headings ── */
+        .card-overlay h2 {
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #f5cf04;
+            opacity: 0.85;
+        }
+
+        .card-overlay h1 {
+            font-size: 26px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+            margin-bottom: 24px;
+        }
+
+        /* ── Form ── */
+        form {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .field label {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .field input {
+            height: 46px;
+            width: 100%;
+            padding: 0 16px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 10px;
+            transition: border-color 0.25s, background 0.25s, box-shadow 0.25s;
+            outline: none;
+        }
+
+        .field input::placeholder {
+            color: rgba(255,255,255,0.25);
+        }
+
+        .field input:focus {
+            border-color: #f5cf04;
+            background: rgba(245, 207, 4, 0.06);
+            box-shadow: 0 0 0 3px rgba(245, 207, 4, 0.15);
+        }
+
+        /* ── Login Button ── */
+        #log-in {
+            margin-top: 6px;
+            width: 100%;
+            height: 48px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #0a0a0a;
+            background: linear-gradient(135deg, #f5cf04 0%, #e6810d 100%);
+            box-shadow: 0 4px 20px rgba(245, 207, 4, 0.35);
+            transition: transform 0.2s, box-shadow 0.2s, filter 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #log-in::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.18), transparent);
+        }
+
+        #log-in:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(245, 207, 4, 0.5);
+            filter: brightness(1.08);
+        }
+
+        #log-in:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 10px rgba(245, 207, 4, 0.3);
+        }
+
+        /* ── Divider ── */
+        .divider {
+            width: 100%;
+            height: 1px;
+            background: rgba(255,255,255,0.08);
+            margin: 4px 0;
+        }
+
+        /* ── Bottom tagline ── */
+        .tagline {
+            font-size: 11px;
+            color: rgba(255,255,255,0.3);
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 460px) {
+            .card { width: 92vw; }
+            .card-overlay { padding: 32px 24px 28px; }
+        }
+    </style>
 </head>
 <body>
-    <style>/* 1. Base Sidebar Layout */
-.sidebar {
-  width: 70px; /* Only wide enough for the icons by default */
-  height: 100vh;
-  background-color: #1e1e24;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 15px 10px;
-  overflow: hidden; /* Crucial: stops expanding text from breaking the layout */
-  transition: width 0.3s ease; /* Smooth sliding expansion */
-}
 
-/* 2. Sidebar Hover State (Expands the container) */
-.sidebar:hover {
-  width: 240px; /* Expands to fit text */
-}
+    <!-- Full-page background video (global network) -->
+    <video id="bg-video" autoplay loop muted playsinline>
+        <source src="/frontend/videos/global-network.mp4" type="video/mp4">
+    </video>
+    <div id="bg-overlay"></div>
 
-/* 3. Button Layout styling */
-.sidebar-btn {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  padding: 12px;
-  background: transparent;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  white-space: nowrap; /* Keeps text on a single line while expanding */
-}
+    <!-- Page content -->
+    <div id="page">
 
-/* 4. Icon Sizing */
-.btn-icon {
-  width: 24px;
-  height: 24px;
-  flex-shrink: 0; /* Prevents the image from shrinking or warping */
-}
+        <!-- Logo -->
+        <img id="logo-img" src="/frontend/images/banner-logo.png" alt="Yamato Logo">
 
-/* 5. Default Text State (Hidden via opacity) */
-.btn-text {
-  margin-left: 15px;
-  color: #ffffff;
-  font-family: sans-serif;
-  opacity: 0; /* Hidden by default */
-  transition: opacity 0.2s ease; /* Fades in nicely */
-}
+        <!-- Login Card -->
+        <div class="card">
 
-/* 6. Reveal Text when the Sidebar is Hovered */
-.sidebar:hover .btn-text {
-  opacity: 1; /* Fades in smoothly after sidebar starts expanding */
-}
-</style>
-<div class="sidebar">
-  <button class="sidebar-btn">
-    <i id="btn-icon"class="ri-home-5-line"></i>>
-    <span class="btn-text">Home</span>
-  </button>
-  
-  <button class="sidebar-btn">
-    <img src="settings-icon.png" alt="Settings" class="btn-icon">
-    <span class="btn-text">Settings</span>
-  </button>
-</div>
+            <!-- Card background video (login_form.mp4) -->
+            <video class="card-video" autoplay loop muted playsinline>
+                <source src="/frontend/videos/login_form.mp4" type="video/mp4">
+            </video>
+
+            <!-- Card content on top of video -->
+            <div class="card-overlay">
+                <h2>Asset Management System</h2>
+                <h1>Sign In</h1>
+
+                <form id="login-form">
+
+                    <div class="field">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" placeholder="Enter your username">
+                    </div>
+
+                    <div class="field">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" placeholder="••••••••">
+                    </div>
+
+                    <button id="log-in" type="submit">Log In</button>
+
+                </form>
+
+                <div class="divider"></div>
+                <p class="tagline">Yamato Corporation · Secure Access Portal</p>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="/frontend/java/login.js"></script>
 </body>
 </html>

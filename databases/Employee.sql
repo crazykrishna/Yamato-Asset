@@ -7,7 +7,7 @@ create table yamatoEmployee(
     email varchar(50) unique default('@yamato-india.co.in'),
     mob_number bigint unique,
     department varchar(10),
-    post varchar(10)
+    designation varchar(10)
 );
 drop table yamatoemployee;
 

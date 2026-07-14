@@ -11,9 +11,10 @@
     font-family: main;
 }
 
-html,body{
+html, body {
     height: 100%;
     width: 100%;
+    overflow: hidden;
 }
 
 header{
@@ -126,16 +127,21 @@ header #contentbar button:hover, #profile button:hover{
     color: black; 
 }
 
-#parent{
+#parent {
+    height: calc(100% - 70px); /* full height minus header */
+    width: 100%;
+    display: flex;
+    overflow: hidden;
+}
+
+#content {
+    padding: 25px 20px;
+    background-color: #f4f4f4;
     height: 100%;
     width: 100%;
     display: flex;
-}
-#content{
-    padding: 25px 20px;
-    background-color:#f4f4f4;
-    height: 100%;
-    width: 100%;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 /* MAIN CONTENT */
@@ -209,15 +215,13 @@ select{
     /* background-color:black; */
     gap: 20px;
 }
-#tab{
-    display: flex;
-    
-    flex-direction: column;
-    height: 525px;
+#tab {
+    flex: 1;
+    min-height: 0; /* critical — lets flex child shrink below content size */
     width: 100%;
-    background-color: transparent;
     margin: 15px 10px;
     overflow-x: auto;
+    overflow-y: auto;
 }
 table{
     border: 1px solid gray;

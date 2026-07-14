@@ -7,27 +7,55 @@
     <link rel="stylesheet" href="/frontend/css/style.css">
 </head>
 <body>
-    <div id="logo">
-        <video autoplay loop muted playsinline>
-            <source src="/frontend/videos/global-network.mp4" type="video/mp4">
-        </video>
-        <img src="/frontend/images/banner-logo.png" alt="logo">
-        <div id="main">
-            <div id="main2">
-                <br>
-                    <h2>Asset Management System</h2><br>
-                    <h3>Sign In</h3><br>
-                <form id="login-form" >
-                    <label for="username">Username</label><br>
-                    <input type="text" id="username"><br>
-                    <label for="password">Password</label><br>
-                    <input type="password" name="password" id="password"><br>
+
+    <!-- Full-page background video -->
+    <video id="bg-video" autoplay loop muted playsinline>
+        <source src="/frontend/videos/global-network.mp4" type="video/mp4">
+    </video>
+    <div id="bg-overlay"></div>
+
+    <!-- Page content -->
+    <div id="page">
+
+        <!-- Logo -->
+        <img id="logo-img" src="/frontend/images/banner-logo.png" alt="Yamato Logo">
+
+        <!-- Login Card -->
+        <div class="card">
+
+            <!-- Card background video -->
+            <video class="card-video" autoplay loop muted playsinline>
+                <source src="/frontend/videos/login_form.mp4" type="video/mp4">
+            </video>
+
+            <!-- Card content on top of video -->
+            <div class="card-overlay">
+                <h2>Asset Management System</h2>
+                <h1>Sign In</h1>
+
+                <form id="login-form">
+
+                    <div class="field">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" placeholder="Enter your username">
+                    </div>
+
+                    <div class="field">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" placeholder="••••••••">
+                    </div>
+
                     <button id="log-in" type="submit">Log In</button>
-                    <br>
+
                 </form>
+
+                <div class="divider"></div>
+                <p class="tagline">Yamato Corporation · Secure Access Portal</p>
             </div>
         </div>
+
     </div>
+
     <script src="/frontend/java/login.js"></script>
 </body>
 </html>

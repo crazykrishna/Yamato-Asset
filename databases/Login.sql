@@ -18,5 +18,5 @@ insert into login values('EMP002','Naresh','naresh@123 '),
 ('EMP008','preeti','preeti@123'),
 ('EMP009','deepak','deepak@123'),
 ('EMP010','chetanya','chetanya@123');
-insert into login values("EMP999",'Admin','Yamato@2022');
+
 select * from login;

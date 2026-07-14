@@ -1,14 +1,48 @@
 from fastapi import FastAPI, HTTPException, status, Body, UploadFile, File
+from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
 import os
+import io
 import pandas as pd
 import math
+from datetime import datetime
 from sqlalchemy import text, inspect
+from reportlab.lib.pagesizes import A4
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import cm
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+import bcrypt as _bcrypt
+import hashlib, base64
 
 # Import the mapped engines from your database.py
-from database import engines 
+from database import engines
+
+# ----------------------------------------------------
+# PASSWORD HASHING (bcrypt direct — no passlib)
+# passlib 1.7.4 is broken with bcrypt 5.0.0 due to
+# the removed __about__ attribute. We call bcrypt directly.
+# SHA-256 pre-hash keeps input at 44 bytes (< 72-byte limit).
+# ----------------------------------------------------
+def _preprocess(plain: str) -> bytes:
+    """SHA-256 → base64 → bytes  (always 44 bytes, fits bcrypt limit)."""
+    digest = hashlib.sha256(plain.encode("utf-8")).digest()
+    return base64.b64encode(digest)
+
+def hash_password(plain: str) -> str:
+    """Return a bcrypt hash string for the given plain-text password."""
+    hashed_bytes = _bcrypt.hashpw(_preprocess(plain), _bcrypt.gensalt())
+    return hashed_bytes.decode("utf-8")
+
+def verify_password(plain: str, hashed: str) -> bool:
+    """Verify a bcrypt hash. Falls back to plain-text for legacy rows."""
+    try:
+        return _bcrypt.checkpw(_preprocess(plain), hashed.encode("utf-8"))
+    except Exception:
+        # Legacy plain-text fallback for rows inserted before hashing
+        return plain == hashed
 
 app = FastAPI()
 
@@ -198,10 +232,11 @@ def get_registered_assets():
 @app.post("/api/users")
 def create_user(user: UserSchema):
     try:
+        hashed_pw = hash_password(user.password)
         with engines["login"].connect() as connection:
             connection.execute(
                 text("INSERT INTO Login (Username, Password) VALUES (:username, :password)"),
-                {"username": user.username, "password": user.password}
+                {"username": user.username, "password": hashed_pw}
             )
             connection.commit()
         return {"message": "User added successfully!", "userId": user.username}
@@ -243,9 +278,9 @@ def get_assigned_assets():
 @app.post("/api/login")
 def login_user(user: UserSchema):
     try:
-        with engines["login"].connect() as connection:
+        with engines["yamato_assets"].connect() as connection:
             result = connection.execute(
-                text("SELECT * FROM Login WHERE Username = :username"),
+                text("SELECT * FROM login WHERE username = :username"),
                 {"username": user.username}
             )
             row = result.mappings().first()
@@ -254,22 +289,66 @@ def login_user(user: UserSchema):
             raise HTTPException(status_code=401, detail="Invalid username or password")
         
         user_data = dict(row)
-        db_password = user_data.get("Password") or user_data.get("password")
-        if db_password != user.password:
-            raise HTTPException(status_code=401, detail="Invalid Username or password")
+        db_password = user_data.get("password")
+
+        # verify_password handles both bcrypt hashes and legacy plain-text
+        if not verify_password(user.password, db_password):
+            raise HTTPException(status_code=401, detail="Invalid username or password")
             
         return {
             "success": True,
             "message": "Login successful!",
             "user": {
                 "id": user_data.get("id"),
-                "username": user_data.get("Username") or user_data.get("username")
+                "username": user_data.get("username")
             }
         }
     except HTTPException as http_ex:
         raise http_ex
     except Exception as e:
-        raise HTTPException(status_code=500, detail="An internal server error occurred")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ---- Password change schema ----
+class ChangePasswordSchema(BaseModel):
+    username: str
+    current_password: str
+    new_password: str
+
+@app.put("/api/change-password")
+def change_password(payload: ChangePasswordSchema):
+    """Verifies the current password then saves a new bcrypt hash."""
+    try:
+        with engines["login"].connect() as connection:
+            result = connection.execute(
+                text("SELECT * FROM Login WHERE Username = :username"),
+                {"username": payload.username}
+            )
+            row = result.mappings().first()
+
+        if not row:
+            raise HTTPException(status_code=404, detail="User not found.")
+
+        user_data = dict(row)
+        db_password = user_data.get("Password") or user_data.get("password")
+
+        if not verify_password(payload.current_password, db_password):
+            raise HTTPException(status_code=401, detail="Current password is incorrect.")
+
+        new_hashed = hash_password(payload.new_password)
+        with engines["login"].connect() as connection:
+            connection.execute(
+                text("UPDATE Login SET Password = :new_pw WHERE Username = :username"),
+                {"new_pw": new_hashed, "username": payload.username}
+            )
+            connection.commit()
+
+        return {"success": True, "message": "Password updated successfully!"}
+    except HTTPException as http_ex:
+        raise http_ex
+    except Exception as e:
+        print("!!! CHANGE PASSWORD ERROR !!!:", str(e))
+        raise HTTPException(status_code=500, detail=f"Password update failed: {str(e)}")
 
 # 1. Declare verification payload input structure schema
 class PurgeVerificationSchema(BaseModel):
@@ -279,7 +358,7 @@ class PurgeVerificationSchema(BaseModel):
 @app.delete("/api/purge-table/{db_name}/{table_name}")
 def purge_database_table(db_name: str, table_name: str, payload: PurgeVerificationSchema):
     # CRITICAL MASTER KEY: Set your super secret confirmation password right here!
-    ADMIN_MASTER_KEY = "YamatoAdmin2026"
+    ADMIN_MASTER_KEY = "Deepak@yamato@2022"
 
     # Verify if the engine exists
     if db_name not in engines:
@@ -410,6 +489,112 @@ def update_assigned_asset_record(asset: AssignedAssetUpdateSchema = Body(...)):
         raise HTTPException(status_code=500, detail=f"Database write failure: {str(e)}")
     
 
+
+@app.get("/api/assets/total-value")
+def get_total_inventory_value():
+    """Sums the price column from currentassets and returns a formatted Indian-currency total."""
+    import re
+    try:
+        inspector = inspect(engines["registeredassets"])
+        if not inspector.has_table("currentassets"):
+            return {"success": True, "total_value": 0, "formatted": "₹0"}
+
+        columns = [col['name'].lower() for col in inspector.get_columns("currentassets")]
+        if "price" not in columns:
+            return {"success": True, "total_value": 0, "formatted": "₹0"}
+
+        query = text("SELECT price FROM currentassets WHERE price IS NOT NULL AND price != ''")
+        with engines["registeredassets"].connect() as connection:
+            rows = connection.execute(query).fetchall()
+
+        total = 0.0
+        for row in rows:
+            cleaned = re.sub(r'[^\d.]', '', str(row[0] or ''))
+            try:
+                total += float(cleaned) if cleaned else 0.0
+            except Exception:
+                pass
+
+        # Format as Indian number system (e.g. ₹12,34,567)
+        n = int(total)
+        s = str(n)
+        if len(s) <= 3:
+            formatted = f"₹{s}"
+        else:
+            last3 = s[-3:]
+            rest = s[:-3]
+            groups = []
+            while len(rest) > 2:
+                groups.insert(0, rest[-2:])
+                rest = rest[:-2]
+            if rest:
+                groups.insert(0, rest)
+            formatted = f"₹{','.join(groups)},{last3}"
+
+        return {"success": True, "total_value": total, "formatted": formatted}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/assets/depreciation")
+def get_asset_depreciation(schedule: str = "1year"):
+    """
+    Returns asset counts for the depreciation chart.
+      schedule='1year' → groups by status for the current year.
+      schedule='5year' → groups by year (last 5 years) if a year column exists.
+    Gracefully falls back when the schema is not fully populated yet.
+    """
+    try:
+        current_year = datetime.now().year
+        inspector = inspect(engines["registeredassets"])
+
+        if not inspector.has_table("currentassets"):
+            return {"success": True, "schedule": schedule, "labels": [], "values": []}
+
+        columns = [col['name'].lower() for col in inspector.get_columns("currentassets")]
+
+        # Try to detect a purchase-year column for the 5-year view
+        year_col = None
+        for candidate in ['purchase_year', 'year', 'purchaseyear', 'purchase_date', 'purchasedate']:
+            if candidate in columns:
+                year_col = candidate
+                break
+
+        with engines["registeredassets"].connect() as connection:
+            if schedule == "5year" and year_col:
+                start_year = current_year - 4
+                query = text(f"""
+                    SELECT {year_col} as yr, COUNT(*) as total
+                    FROM currentassets
+                    WHERE {year_col} BETWEEN :start AND :end
+                    GROUP BY {year_col}
+                    ORDER BY yr ASC
+                """)
+                result = connection.execute(query, {"start": start_year, "end": current_year}).fetchall()
+                year_map = {str(r[0]): r[1] for r in result}
+                # Fill missing years with 0
+                all_years = [str(y) for y in range(start_year, current_year + 1)]
+                labels = all_years
+                values = [year_map.get(y, 0) for y in all_years]
+
+            elif "status" in columns:
+                # Group by status for current-year view
+                query = text("SELECT status, COUNT(*) as total FROM currentassets GROUP BY status")
+                result = connection.execute(query).fetchall()
+                labels = [str(r[0] or "Unknown") for r in result]
+                values = [r[1] for r in result]
+
+            else:
+                # Absolute fallback: total count attributed to current year
+                total = connection.execute(text("SELECT COUNT(*) FROM currentassets")).scalar() or 0
+                labels = [str(current_year)]
+                values = [total]
+
+        return {"success": True, "schedule": schedule, "labels": labels, "values": values}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @app.get('/api/assets/count')
 def get_total_assets_count():
     try:
@@ -526,3 +711,204 @@ def update_inventory_asset_dynamic(payload: dict = Body(...)):
     except Exception as e:
         print("!!! DYNAMIC ROW UPDATE ERROR !!!:", str(e))
         raise HTTPException(status_code=500, detail=f"Database update failure: {str(e)}")
+
+
+# ----------------------------------------------------
+# PDF REPORT GENERATION ROUTES
+# ----------------------------------------------------
+
+def _fetch_assigned_assets_data() -> list:
+    """Shared helper: fetches all employee-asset assignment records."""
+    try:
+        inspector = inspect(engines["assets"])
+        if not inspector.has_table("totalassets"):
+            return []
+        query = text("""
+            SELECT 
+                a.assetId,
+                a.name        AS asset_name,
+                a.asset_type,
+                a.status,
+                a.purchase_date,
+                a.assigned_to AS employee_name,
+                e.email,
+                e.mob_number  AS phone_number,
+                e.department,
+                a.remarks
+            FROM totalassets a
+            LEFT JOIN employee.yamatoemployee e ON a.assigned_to = e.name
+        """)
+        with engines["assets"].connect() as conn:
+            rows = [dict(r) for r in conn.execute(query).mappings().all()]
+        return rows
+    except Exception as e:
+        print("!!! REPORT DATA FETCH ERROR !!!:", str(e))
+        raise HTTPException(status_code=500, detail=f"Data fetch error: {str(e)}")
+
+
+def _build_pdf(title: str, columns: list, rows: list, subtitle: str = "") -> io.BytesIO:
+    """Core PDF builder using ReportLab. Returns an in-memory PDF buffer."""
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(
+        buffer,
+        pagesize=A4,
+        rightMargin=1.5 * cm,
+        leftMargin=1.5 * cm,
+        topMargin=2 * cm,
+        bottomMargin=2 * cm,
+    )
+
+    styles = getSampleStyleSheet()
+    story = []
+
+    # Title
+    title_style = ParagraphStyle(
+        "ReportTitle",
+        parent=styles["Title"],
+        fontSize=18,
+        textColor=colors.HexColor("#1a237e"),
+        spaceAfter=4,
+    )
+    story.append(Paragraph("Yamato Asset Management", title_style))
+
+    sub_style = ParagraphStyle(
+        "SubTitle",
+        parent=styles["Normal"],
+        fontSize=11,
+        textColor=colors.HexColor("#455a64"),
+        spaceAfter=2,
+    )
+    story.append(Paragraph(title, sub_style))
+    if subtitle:
+        story.append(Paragraph(subtitle, sub_style))
+
+    generated_style = ParagraphStyle(
+        "Generated",
+        parent=styles["Normal"],
+        fontSize=8,
+        textColor=colors.grey,
+        spaceAfter=12,
+    )
+    story.append(Paragraph(f"Generated on: {datetime.now().strftime('%d %B %Y, %I:%M %p')}", generated_style))
+    story.append(Spacer(1, 0.3 * cm))
+
+    # Table
+    header_row = [col.replace("_", " ").upper() for col in columns]
+    table_data = [header_row]
+
+    for row in rows:
+        table_data.append([str(row.get(col, "") or "") for col in columns])
+
+    col_count = len(columns)
+    available_width = A4[0] - 3 * cm  # page width minus margins
+    col_width = available_width / col_count
+
+    table = Table(table_data, colWidths=[col_width] * col_count, repeatRows=1)
+    table.setStyle(TableStyle([
+        # Header
+        ("BACKGROUND",   (0, 0), (-1, 0),  colors.HexColor("#1a237e")),
+        ("TEXTCOLOR",    (0, 0), (-1, 0),  colors.white),
+        ("FONTNAME",     (0, 0), (-1, 0),  "Helvetica-Bold"),
+        ("FONTSIZE",     (0, 0), (-1, 0),  8),
+        ("ALIGN",        (0, 0), (-1, 0),  "CENTER"),
+        ("BOTTOMPADDING",(0, 0), (-1, 0),  6),
+        ("TOPPADDING",   (0, 0), (-1, 0),  6),
+        # Body rows
+        ("FONTNAME",     (0, 1), (-1, -1), "Helvetica"),
+        ("FONTSIZE",     (0, 1), (-1, -1), 7),
+        ("ROWBACKGROUNDS",(0, 1), (-1, -1), [colors.white, colors.HexColor("#e8eaf6")]),
+        ("ALIGN",        (0, 1), (-1, -1), "LEFT"),
+        ("VALIGN",       (0, 0), (-1, -1), "MIDDLE"),
+        ("TOPPADDING",   (0, 1), (-1, -1), 4),
+        ("BOTTOMPADDING",(0, 1), (-1, -1), 4),
+        # Grid
+        ("GRID",         (0, 0), (-1, -1), 0.4, colors.HexColor("#c5cae9")),
+        ("BOX",          (0, 0), (-1, -1), 1,   colors.HexColor("#1a237e")),
+    ]))
+    story.append(table)
+
+    doc.build(story)
+    buffer.seek(0)
+    return buffer
+
+
+@app.get("/api/reports/audit-trail")
+def generate_audit_trail_report():
+    """PDF: Full asset audit trail — all assets with assigned employee details."""
+    rows = _fetch_assigned_assets_data()
+    columns = ["assetId", "asset_name", "asset_type", "status",
+               "purchase_date", "employee_name", "email", "phone_number", "department", "remarks"]
+    buffer = _build_pdf(
+        title="Asset Audit Trail Report",
+        subtitle=f"Total Records: {len(rows)}",
+        columns=columns,
+        rows=rows
+    )
+    return StreamingResponse(
+        buffer,
+        media_type="application/pdf",
+        headers={"Content-Disposition": "attachment; filename=audit_trail_report.pdf"}
+    )
+
+
+@app.get("/api/reports/maintenance-schedule")
+def generate_maintenance_schedule_report():
+    """PDF: Maintenance schedule — assets sorted by purchase date showing oldest first."""
+    rows = _fetch_assigned_assets_data()
+    # Sort by purchase date ascending (oldest assets need maintenance soonest)
+    rows_sorted = sorted(
+        rows,
+        key=lambda r: str(r.get("purchase_date") or "9999"),
+    )
+    columns = ["assetId", "asset_name", "asset_type", "status", "purchase_date", "employee_name", "department", "remarks"]
+    buffer = _build_pdf(
+        title="Maintenance Schedule Report",
+        subtitle="Sorted by Purchase Date (Oldest First — Priority Maintenance)",
+        columns=columns,
+        rows=rows_sorted
+    )
+    return StreamingResponse(
+        buffer,
+        media_type="application/pdf",
+        headers={"Content-Disposition": "attachment; filename=maintenance_schedule_report.pdf"}
+    )
+
+
+@app.get("/api/reports/user-activity-log")
+def generate_user_activity_log_report():
+    """PDF: User activity log — employee-centric view of all asset assignments."""
+    rows = _fetch_assigned_assets_data()
+    # Sort by employee name for easier reading
+    rows_sorted = sorted(rows, key=lambda r: str(r.get("employee_name") or "ZZZ"))
+    columns = ["employee_name", "email", "phone_number", "department", "assetId", "asset_name", "asset_type", "status"]
+    buffer = _build_pdf(
+        title="User Activity Log Report",
+        subtitle="Employee Asset Assignment Overview — Sorted by Employee Name",
+        columns=columns,
+        rows=rows_sorted
+    )
+    return StreamingResponse(
+        buffer,
+        media_type="application/pdf",
+        headers={"Content-Disposition": "attachment; filename=user_activity_log_report.pdf"}
+    )
+
+
+@app.get("/api/reports/checkout-history")
+def generate_checkout_history_report():
+    """PDF: Check-out history — assets that are currently assigned (not unassigned)."""
+    rows = _fetch_assigned_assets_data()
+    # Filter only rows where an employee is actually assigned
+    checked_out = [r for r in rows if r.get("employee_name") and str(r["employee_name"]).strip() != ""]
+    columns = ["assetId", "asset_name", "asset_type", "employee_name", "email", "department", "phone_number", "status", "purchase_date"]
+    buffer = _build_pdf(
+        title="Asset Check-out History Report",
+        subtitle=f"Currently Checked-out Assets: {len(checked_out)} of {len(rows)} total",
+        columns=columns,
+        rows=checked_out
+    )
+    return StreamingResponse(
+        buffer,
+        media_type="application/pdf",
+        headers={"Content-Disposition": "attachment; filename=checkout_history_report.pdf"}
+    )

@@ -35,6 +35,8 @@ insert into totalassets(asset_id,name,category,serialno,asset_type) values ('YL0
 show tables;
 select * from yamatoemployee;
 
+drop database registeredassets;
+
 select
 a.assetId,
 a.name as asset_name,

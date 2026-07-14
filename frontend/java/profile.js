@@ -321,4 +321,195 @@ function setupPasswordToggle() {
 window.addEventListener('DOMContentLoaded', () => {
     populateTableDropdown();
     setupPasswordToggle();
+    loadProfileCredentials();
+    setupPasswordReset();
 });
+
+/**
+ * ====================================================================
+ * 8. PROFILE CREDENTIALS DISPLAY
+ * ====================================================================
+ */
+function loadProfileCredentials() {
+    const storedUser = localStorage.getItem('user');
+    if (!storedUser) return;
+
+    const user = JSON.parse(storedUser);
+    const usernameInput = document.getElementById('profile-username');
+    const passwordInput = document.getElementById('profile-password');
+    const headingEl    = document.querySelector('#content h1');
+
+    if (usernameInput && user.username) {
+        usernameInput.value = user.username;
+    }
+    // Show masked dots for the password — never expose the real value in the DOM
+    if (passwordInput) {
+        passwordInput.value = '••••••••••••';
+    }
+    if (headingEl && user.username) {
+        headingEl.innerText = `Hello, ${user.username} 👋`;
+    }
+}
+
+/**
+ * ====================================================================
+ * 9. 2-STEP PASSWORD RESET MODAL ENGINE
+ * ====================================================================
+ */
+function setupPasswordReset() {
+    const step1Modal    = document.getElementById('reset-modal-step1');
+    const step2Modal    = document.getElementById('reset-modal-step2');
+    const step1Error    = document.getElementById('reset-step1-error');
+    const step2Error    = document.getElementById('reset-step2-error');
+    const currentPwIn   = document.getElementById('reset-current-pw');
+    const newPwIn       = document.getElementById('reset-new-pw');
+    const confirmPwIn   = document.getElementById('reset-confirm-pw');
+
+    // --- Helper: show/hide a modal ---
+    function openModal(el)  { if (el) el.style.display = 'flex'; }
+    function closeModal(el) { if (el) el.style.display = 'none'; }
+
+    // --- Helper: eye toggle for any password field ---
+    function bindEyeToggle(eyeId, inputId) {
+        const eye   = document.getElementById(eyeId);
+        const input = document.getElementById(inputId);
+        if (!eye || !input) return;
+        eye.addEventListener('click', () => {
+            const masked = input.type === 'password';
+            input.type   = masked ? 'text' : 'password';
+            eye.className = masked ? 'ri-eye-line' : 'ri-eye-off-line';
+        });
+    }
+    bindEyeToggle('toggle-reset-current', 'reset-current-pw');
+    bindEyeToggle('toggle-reset-new',     'reset-new-pw');
+    bindEyeToggle('toggle-reset-confirm', 'reset-confirm-pw');
+
+    // --- Open Step 1 when Reset button is clicked ---
+    document.getElementById('change')?.addEventListener('click', () => {
+        if (currentPwIn) currentPwIn.value = '';
+        if (step1Error)  { step1Error.style.display = 'none'; step1Error.innerText = ''; }
+        openModal(step1Modal);
+    });
+
+    // --- Close Step 1 on Cancel ---
+    document.getElementById('reset-step1-cancel')?.addEventListener('click', () => closeModal(step1Modal));
+    step1Modal?.addEventListener('click', (e) => { if (e.target === step1Modal) closeModal(step1Modal); });
+
+    // --- Step 1: Verify current password via backend ---
+    document.getElementById('reset-step1-confirm')?.addEventListener('click', async () => {
+        const storedUser = localStorage.getItem('user');
+        if (!storedUser) {
+            if (step1Error) { step1Error.innerText = 'Session expired. Please log in again.'; step1Error.style.display = 'block'; }
+            return;
+        }
+        const user = JSON.parse(storedUser);
+        const currentPw = currentPwIn ? currentPwIn.value.trim() : '';
+
+        if (!currentPw) {
+            if (step1Error) { step1Error.innerText = 'Please enter your current password.'; step1Error.style.display = 'block'; }
+            return;
+        }
+
+        const confirmBtn = document.getElementById('reset-step1-confirm');
+        confirmBtn.innerText = 'Verifying...';
+        confirmBtn.disabled = true;
+
+        try {
+            // We verify by hitting change-password with an empty new_password sentinel
+            // to check the current password — actually we call /api/login to verify identity
+            const verifyRes = await fetch(`${BACKEND_BASE_URL}/api/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: user.username, password: currentPw })
+            });
+
+            if (verifyRes.ok) {
+                // Store current password temporarily (in memory only) for Step 2
+                window._resetCurrentPw = currentPw;
+                closeModal(step1Modal);
+                // Clear Step 2 fields
+                if (newPwIn)     newPwIn.value = '';
+                if (confirmPwIn) confirmPwIn.value = '';
+                if (step2Error)  { step2Error.style.display = 'none'; step2Error.innerText = ''; }
+                openModal(step2Modal);
+            } else {
+                const err = await verifyRes.json().catch(() => ({}));
+                if (step1Error) {
+                    step1Error.innerText = err.detail || 'Incorrect password. Please try again.';
+                    step1Error.style.display = 'block';
+                }
+            }
+        } catch (error) {
+            console.error('Reset Step 1 error:', error);
+            if (step1Error) { step1Error.innerText = 'Could not connect to server.'; step1Error.style.display = 'block'; }
+        } finally {
+            confirmBtn.innerText = 'Verify & Continue';
+            confirmBtn.disabled = false;
+        }
+    });
+
+    // --- Back to Step 1 from Step 2 ---
+    document.getElementById('reset-step2-back')?.addEventListener('click', () => {
+        closeModal(step2Modal);
+        openModal(step1Modal);
+    });
+    step2Modal?.addEventListener('click', (e) => { if (e.target === step2Modal) closeModal(step2Modal); });
+
+    // --- Step 2: Save new password ---
+    document.getElementById('reset-step2-confirm')?.addEventListener('click', async () => {
+        const newPw     = newPwIn     ? newPwIn.value.trim()     : '';
+        const confirmPw = confirmPwIn ? confirmPwIn.value.trim() : '';
+
+        if (!newPw) {
+            if (step2Error) { step2Error.innerText = 'Please enter a new password.'; step2Error.style.display = 'block'; }
+            return;
+        }
+        if (newPw !== confirmPw) {
+            if (step2Error) { step2Error.innerText = 'Passwords do not match. Please try again.'; step2Error.style.display = 'block'; }
+            return;
+        }
+        if (newPw.length < 6) {
+            if (step2Error) { step2Error.innerText = 'Password must be at least 6 characters.'; step2Error.style.display = 'block'; }
+            return;
+        }
+
+        const storedUser = localStorage.getItem('user');
+        if (!storedUser) return;
+        const user = JSON.parse(storedUser);
+
+        const saveBtn = document.getElementById('reset-step2-confirm');
+        saveBtn.innerText = 'Saving...';
+        saveBtn.disabled = true;
+
+        try {
+            const res = await fetch(`${BACKEND_BASE_URL}/api/change-password`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    username: user.username,
+                    current_password: window._resetCurrentPw || '',
+                    new_password: newPw
+                })
+            });
+
+            const result = await res.json().catch(() => ({}));
+
+            if (res.ok) {
+                window._resetCurrentPw = null;
+                closeModal(step2Modal);
+                showResultModal(true, 'Password Updated', 'Your password has been changed successfully. Please use the new password on your next login.');
+            } else {
+                if (step2Error) {
+                    step2Error.innerText = result.detail || 'Failed to update password. Please try again.';
+                    step2Error.style.display = 'block';
+                }
+            }
+        } catch (error) {
+            console.error('Reset Step 2 error:', error);
+            if (step2Error) { step2Error.innerText = 'Connection error. Please try again.'; step2Error.style.display = 'block'; }
+        } finally {
+            saveBtn.innerText = 'Save Password';
+            saveBtn.disabled = false;
+        }
+    });
+}
