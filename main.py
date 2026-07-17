@@ -1,3 +1,5 @@
+import pymysql
+pymysql.install_as_MySQLdb()  # <-- This tricks your app into using PyMySQL instead of mysqlclient!
 from fastapi import FastAPI, HTTPException, status, Body, UploadFile, File
 from fastapi.responses import StreamingResponse,FileResponse
 from fastapi.middleware.cors import CORSMiddleware
