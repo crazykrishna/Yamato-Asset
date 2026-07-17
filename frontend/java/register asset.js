@@ -1,20 +1,20 @@
 // SAFE SIDEBAR NAVIGATION LISTENERS
-document.getElementById('home')?.addEventListener("click", () => { window.location.href = "home.html"; });
-document.getElementById('assets-list')?.addEventListener("click", () => { window.location.href = "assets list.html"; });
-document.getElementById('inventory')?.addEventListener("click", () => { window.location.href = "inventory.html"; });
-document.getElementById('reports')?.addEventListener("click", () => { window.location.href = "reports.html"; });
+document.getElementById('home')?.addEventListener("click", () => { window.location.href = "/home"; });
+document.getElementById('assets-list')?.addEventListener("click", () => { window.location.href = "/assets-list"; });
+document.getElementById('inventory')?.addEventListener("click", () => { window.location.href = "/inventory"; });
+document.getElementById('reports')?.addEventListener("click", () => { window.location.href = "/reports"; });
 document.getElementById('log-out')?.addEventListener("click", () => {
     alert("Log-Out Successful! Back to login page. ");
-    window.location.href = "login.html"; 
+    window.location.href = "/login"; 
 });
-document.getElementById('find')?.addEventListener("click", () => { window.location.href = "inventory.html"; });
-document.getElementById('Register-Asset')?.addEventListener("click", () => { window.location.href = "register asset.html"; });
-document.getElementById('assests-list')?.addEventListener("click", () => { window.location.href = "assets list.html"; });
-document.getElementById('Register-New-User')?.addEventListener("click", () => { window.location.href = "register new user.html"; });
-document.getElementById('profilee')?.addEventListener("click", () => { window.location.href = "profile.html"; });
+document.getElementById('find')?.addEventListener("click", () => { window.location.href = "/inventory"; });
+document.getElementById('Register-Asset')?.addEventListener("click", () => { window.location.href = "/register-asset"; });
+document.getElementById('assests-list')?.addEventListener("click", () => { window.location.href = "/assets-list"; });
+document.getElementById('Register-New-User')?.addEventListener("click", () => { window.location.href = "/register-user"; });
+document.getElementById('profilee')?.addEventListener("click", () => { window.location.href = "/profile"; });
 
 // TARGET: Set up the correct endpoint for your registration ledger pipeline
-const post_url = 'http://127.0.0.1:8000/api/regAssets';
+const post_url = '/api/regAssets';
 
 document.getElementById('register-asset-form')?.addEventListener('submit', async (event) => {
     event.preventDefault(); // Stop standard browser page reload behavior
@@ -49,7 +49,7 @@ document.getElementById('register-asset-form')?.addEventListener('submit', async
         if (response.ok) {
             alert('Asset successfully registered in the ledger!');
             document.getElementById('register-asset-form').reset(); // Clear input boxes
-            window.location.href = "assets list.html"; // Redirect the operator to see the list
+            window.location.href = "/assets-list"; // Redirect the operator to see the list
         } else {
             alert('Server Error: ' + JSON.stringify(result.detail || result.message));
         }

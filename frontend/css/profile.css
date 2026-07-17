@@ -1,6 +1,7 @@
+/* The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space. */
 @font-face {
     font-family: main;
-    src: url(/frontend/fonts/IBM_PLEX_SERIF/IBMPlexSerif-Light.ttf);
+    src: url(../fonts/IBM_PLEX_SERIF/IBMPlexSerif-Light.ttf);
 }
 
 *{
@@ -251,17 +252,20 @@ header #contentbar button:hover, #profile button:hover{
     flex-shrink: 0; /* FIXED: Prevents this entire block from collapsing */
 }
 
-#all{
+.employee-row {
     width: 100%;
-    height: 100%;
+    height: 50px;
+    min-height: 50px;
     border: 1px solid gray;
     background-color: white;
     display: flex;
     align-items: center;
-    padding-left: 10px;
+    padding-left: 15px;
+    padding-right: 15px;
     border-radius: 10px;
     justify-content: space-between;
-    font-size: 20px;
+    font-size: 16px;
+    margin-bottom: 10px;
 }
 
 .sub{
@@ -415,9 +419,9 @@ label{
 
 #list{
     margin-top: 15px;
-    min-height: 150px;
+    height: 100%;
     width: 100%;
-    background-color: transparent;
+    background-color: white;
     border-radius: 10px;
     border: 1px solid gray;
     padding: 15px;

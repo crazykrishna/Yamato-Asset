@@ -1,18 +1,18 @@
 // ============================================================
 // NAVIGATION
 // ============================================================
-document.getElementById('home')?.addEventListener('click', () => { window.location.href = 'home.html'; });
-document.getElementById('assets-list')?.addEventListener('click', () => { window.location.href = 'assets list.html'; });
-document.getElementById('inventory')?.addEventListener('click', () => { window.location.href = 'inventory.html'; });
-document.getElementById('reports')?.addEventListener('click', () => { window.location.href = 'reports.html'; });
-document.getElementById('log-out')?.addEventListener('click', () => { window.location.href = 'login.html'; });
-document.getElementById('find')?.addEventListener('click', () => { window.location.href = 'inventory.html'; });
-document.getElementById('Register-Asset')?.addEventListener('click', () => { window.location.href = 'register asset.html'; });
-document.getElementById('assests-list')?.addEventListener('click', () => { window.location.href = 'assets list.html'; });
-document.getElementById('Register-New-User')?.addEventListener('click', () => { window.location.href = 'register new user.html'; });
-document.getElementById('profilee')?.addEventListener('click', () => { window.location.href = 'profile.html'; });
+document.getElementById('home')?.addEventListener('click', () => { window.location.href = '/home'; });
+document.getElementById('assets-list')?.addEventListener('click', () => { window.location.href = '/assets-list'; });
+document.getElementById('inventory')?.addEventListener('click', () => { window.location.href = '/inventory'; });
+document.getElementById('reports')?.addEventListener('click', () => { window.location.href = '/reports'; });
+document.getElementById('log-out')?.addEventListener('click', () => { window.location.href = '/login'; });
+document.getElementById('find')?.addEventListener('click', () => { window.location.href = '/inventory'; });
+document.getElementById('Register-Asset')?.addEventListener('click', () => { window.location.href = '/register-asset'; });
+document.getElementById('assests-list')?.addEventListener('click', () => { window.location.href = '/assets-list'; });
+document.getElementById('Register-New-User')?.addEventListener('click', () => { window.location.href = '/register-user'; });
+document.getElementById('profilee')?.addEventListener('click', () => { window.location.href = '/profile'; });
 
-const BASE = 'http://127.0.0.1:8000';
+const BASE = '';  // Empty = same origin — FastAPI serves frontend + API on port 8000
 
 // ============================================================
 // REPORT ENDPOINT MAP
@@ -21,10 +21,10 @@ const BASE = 'http://127.0.0.1:8000';
 // with the matching data-report attribute. No JS changes needed.
 // ============================================================
 const REPORT_CONFIG = {
-    'audit-trail':      { pdf: '/api/reports/audit-trail',         label: 'Asset Audit Trail' },
-    'maintenance':      { pdf: '/api/reports/maintenance-schedule', label: 'Maintenance Schedule' },
-    'user-activity':    { pdf: '/api/reports/user-activity-log',    label: 'User Activity Log' },
-    'checkout-history': { pdf: '/api/reports/checkout-history',     label: 'Check-out History' },
+    'audit-trail':      { pdf: '/api/reports/audit-trail',         svg: '/api/reports/audit-trail/svg',         label: 'Asset Audit Trail' },
+    'maintenance':      { pdf: '/api/reports/maintenance-schedule', svg: '/api/reports/maintenance-schedule/svg', label: 'Maintenance Schedule' },
+    'user-activity':    { pdf: '/api/reports/user-activity-log',    svg: '/api/reports/user-activity-log/svg',    label: 'User Activity Log' },
+    'checkout-history': { pdf: '/api/reports/checkout-history',     svg: '/api/reports/checkout-history/svg',     label: 'Check-out History' },
 };
 
 // ============================================================
@@ -146,35 +146,76 @@ async function loadTotalValue() {
 }
 
 // ============================================================
-// PDF REPORT DOWNLOAD ENGINE
-// Uses data-report attribute — no index-based mapping needed.
-// Adding a new report type only requires a new REPORT_CONFIG
-// entry and a button with the matching data-report attribute.
+// AUTHENTICATED REPORT DOWNLOAD ENGINE
 // ============================================================
-async function downloadReport(reportKey, buttonEl) {
-    const config = REPORT_CONFIG[reportKey];
-    if (!config) {
-        console.warn('Unknown report key:', reportKey);
+let currentAction = null; // 'pdf' or 'svg'
+let currentReportKey = null;
+let currentButton = null;
+
+const modal = document.getElementById('custom-verify-modal');
+const pwInput = document.getElementById('verify-password-input');
+const errorMsg = document.getElementById('verify-error-msg');
+
+function showVerifyModal(action, reportKey, buttonEl) {
+    currentAction = action;
+    currentReportKey = reportKey;
+    currentButton = buttonEl;
+    if (pwInput) pwInput.value = '';
+    if (errorMsg) { errorMsg.style.display = 'none'; errorMsg.innerText = ''; }
+    if (modal) modal.style.display = 'flex';
+}
+
+function closeVerifyModal() {
+    if (modal) modal.style.display = 'none';
+    currentAction = null;
+    currentReportKey = null;
+    currentButton = null;
+}
+
+document.getElementById('verify-modal-close-btn')?.addEventListener('click', closeVerifyModal);
+document.getElementById('verify-cancel-btn')?.addEventListener('click', closeVerifyModal);
+document.getElementById('custom-verify-modal')?.addEventListener('click', (e) => {
+    if (e.target === modal) closeVerifyModal();
+});
+
+document.getElementById('verify-confirm-btn')?.addEventListener('click', async () => {
+    const password = pwInput ? pwInput.value.trim() : "";
+    if (!password) {
+        if (errorMsg) {
+            errorMsg.innerText = "Please enter the admin password.";
+            errorMsg.style.display = "block";
+        }
         return;
     }
 
-    const originalText = buttonEl.textContent;
-    buttonEl.textContent = 'Generating...';
-    buttonEl.disabled = true;
+    const config = REPORT_CONFIG[currentReportKey];
+    if (!config) return;
+
+    const originalText = currentButton.textContent;
+    currentButton.textContent = 'Generating...';
+    currentButton.disabled = true;
+    if (errorMsg) errorMsg.style.display = 'none';
 
     try {
-        const response = await fetch(`${BASE}${config.pdf}`);
+        const endpoint = currentAction === 'pdf' ? config.pdf : config.svg;
+        const response = await fetch(`${BASE}${endpoint}?security_key=${encodeURIComponent(password)}`);
 
         if (!response.ok) {
             const errData = await response.json().catch(() => ({}));
-            alert(`Failed to generate "${config.label}" report:\n${errData.detail || `Server error ${response.status}`}`);
+            if (errorMsg) {
+                errorMsg.innerText = errData.detail || "Authentication failed.";
+                errorMsg.style.display = "block";
+            }
+            currentButton.textContent = originalText;
+            currentButton.disabled = false;
             return;
         }
 
-        // Extract filename from Content-Disposition header if available
+        // Success: download file
         const disposition = response.headers.get('Content-Disposition') || '';
         const match       = disposition.match(/filename=([^;]+)/);
-        const filename    = match ? match[1].replace(/['"]/g, '') : `${reportKey}_report.pdf`;
+        const ext         = currentAction === 'pdf' ? 'pdf' : 'svg';
+        const filename    = match ? match[1].replace(/['"]/g, '') : `${currentReportKey}_report.${ext}`;
 
         const blob = await response.blob();
         const url  = URL.createObjectURL(blob);
@@ -186,14 +227,18 @@ async function downloadReport(reportKey, buttonEl) {
         a.remove();
         URL.revokeObjectURL(url);
 
+        closeVerifyModal();
     } catch (error) {
         console.error('Report download error:', error);
-        alert('Could not connect to the report server. Is the backend running?');
+        if (errorMsg) {
+            errorMsg.innerText = "Could not connect to the report server.";
+            errorMsg.style.display = "block";
+        }
     } finally {
-        buttonEl.textContent = originalText;
-        buttonEl.disabled    = false;
+        currentButton.textContent = originalText;
+        currentButton.disabled    = false;
     }
-}
+});
 
 // ============================================================
 // INITIALISE ON PAGE LOAD
@@ -202,15 +247,12 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // Bind Generate Report buttons via data-report attribute
     document.querySelectorAll('button.special[data-report]').forEach(btn => {
-        btn.addEventListener('click', () => downloadReport(btn.dataset.report, btn));
+        btn.addEventListener('click', () => showVerifyModal('pdf', btn.dataset.report, btn));
     });
 
     // Bind SVG buttons via data-report attribute
     document.querySelectorAll('button.svg[data-report]').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const label = REPORT_CONFIG[btn.dataset.report]?.label || btn.dataset.report;
-            alert(`SVG export for "${label}" is not yet implemented.`);
-        });
+        btn.addEventListener('click', () => showVerifyModal('svg', btn.dataset.report, btn));
     });
 
     // Load data

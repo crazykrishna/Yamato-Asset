@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException, status, Body, UploadFile, File
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse,FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
@@ -13,12 +13,14 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import cm
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image as RLImage
 import bcrypt as _bcrypt
 import hashlib, base64
-
+from fastapi.staticfiles import StaticFiles
 # Import the mapped engines from your database.py
 from database import engines
+
+
 
 # ----------------------------------------------------
 # PASSWORD HASHING (bcrypt direct — no passlib)
@@ -44,7 +46,36 @@ def verify_password(plain: str, hashed: str) -> bool:
         # Legacy plain-text fallback for rows inserted before hashing
         return plain == hashed
 
+
+
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://your-frontend-domain.netlify.app", "http://localhost:5173"], 
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# ── Resolve the Yamato root directory relative to THIS file ──────────────────
+# main.py lives at:  Yamato/Backend/python/main.py
+# We go up two levels (python/ → Backend/ → Yamato/) to get the project root.
+_HERE       = os.path.dirname(os.path.abspath(__file__))          # …/Backend/python
+_ROOT       = os.path.normpath(os.path.join(_HERE, "..", ".."))   # …/Yamato
+_FRONTEND   = os.path.join(_ROOT, "frontend")                     # …/Yamato/frontend
+_LOGIN_HTML = os.path.join(_FRONTEND, "html", "login.html")       # …/frontend/html/login.html
+_HOME_HTML = os.path.join(_FRONTEND, "html", "home.html")       # …/frontend/html/login.html
+_ASSETS_LIST_HTML = os.path.join(_FRONTEND, "html", "asset list.html")       # …/frontend/html/login.html
+_INVENTORY_HTML = os.path.join(_FRONTEND, "html", "inventory.html")       # …/frontend/html/login.html
+_PROFILE_HTML = os.path.join(_FRONTEND, "html", "profile.html")       # …/frontend/html/login.html
+_REGISTER_ASSET_HTML = os.path.join(_FRONTEND, "html", "register asset.html")       # …/frontend/html/login.html
+_REGISTER_NEW_USER_HTML = os.path.join(_FRONTEND, "html", "register new user.html")       # …/frontend/html/register new user.html
+_REPORTS_HTML = os.path.join(_FRONTEND, "html", "reports.html")       # …/frontend/html/reports.html
+
+
+# ── Mount the WHOLE frontend directory so CSS/JS/images are all reachable ────
+app.mount("/frontend", StaticFiles(directory=_FRONTEND), name="frontend")
 
 # Configuration for file uploads
 UPLOAD_DIR = os.path.join(os.getcwd(), "uploads")
@@ -107,8 +138,41 @@ app.add_middleware(
 # ROUTES & LOGIC
 # ----------------------------------------------------
 @app.get("/")
+async def read_root():
+    return FileResponse(_LOGIN_HTML)
+
+@app.get("/home.html")
 def read_root():
-    return {"status": "Backend is running flawlessly!", "message": "Hello World!"}
+    return FileResponse(_HOME_HTML)
+
+# ── Individual HTML page routes (clean URLs for browser navigation) ───────────
+def _html(name: str):
+    """Helper: returns a FileResponse for a named HTML file inside frontend/html/."""
+    return FileResponse(os.path.join(_FRONTEND, "html", name))
+
+@app.get("/login")
+def page_login():          return _html("login.html")
+
+@app.get("/home")
+def page_home():           return _html("home.html")
+
+@app.get("/assets-list")
+def page_assets_list():    return _html("assets list.html")
+
+@app.get("/inventory")
+def page_inventory():      return _html("inventory.html")
+
+@app.get("/reports")
+def page_reports():        return _html("reports.html")
+
+@app.get("/register-asset")
+def page_register_asset(): return _html("register asset.html")
+
+@app.get("/register-user")
+def page_register_user():  return _html("register new user.html")
+
+@app.get("/profile")
+def page_profile():        return _html("profile.html")
 
 @app.get("/tables/{db_name}/{table_name}")
 def get_table_data(db_name: str, table_name: str):
@@ -158,6 +222,8 @@ async def upload_excel_file(db_name: str, file: UploadFile = File(...)):
             table_name = "totalassets"      # Asset List -> Assets DB -> totalassets
         elif db_name == "registeredassets":
             table_name = "currentassets"    # Inventory -> Registeredassets -> currentassets
+        elif db_name == "employee":
+            table_name = "yamatoemployee"   # Employee -> Employee DB -> yamatoemployee
         else:
             raw_filename = os.path.splitext(file.filename)[0]
             table_name = raw_filename.replace(" ", "_").replace("-", "_").lower()
@@ -233,11 +299,12 @@ def get_registered_assets():
 def create_user(user: UserSchema):
     try:
         hashed_pw = hash_password(user.password)
-        with engines["login"].connect() as connection:
+        with engines["yamato_assets"].connect() as connection:
             connection.execute(
-                text("INSERT INTO Login (Username, Password) VALUES (:username, :password)"),
+                text("UPDATE login SET password = :password WHERE username = :username"),
                 {"username": user.username, "password": hashed_pw}
             )
+
             connection.commit()
         return {"message": "User added successfully!", "userId": user.username}
     except Exception as e:
@@ -246,6 +313,21 @@ def create_user(user: UserSchema):
 @app.get("/api/employee")
 def get_employees():
     try:
+        # Ensure table exists
+        create_query = text("""
+            CREATE TABLE IF NOT EXISTS yamatoemployee (
+                empId VARCHAR(50) PRIMARY KEY,
+                name VARCHAR(100),
+                email VARCHAR(100),
+                mob_number VARCHAR(20),
+                department VARCHAR(100),
+                designation VARCHAR(100)
+            )
+        """)
+        with engines["employee"].connect() as connection:
+            connection.execute(create_query)
+            connection.commit()
+
         df = pd.read_sql_table("yamatoemployee", con=engines["employee"])
         df = df.where(pd.notnull(df), None)
         return df.to_dict(orient="records")
@@ -255,25 +337,88 @@ def get_employees():
 @app.get("/api/assigned-assets")
 def get_assigned_assets():
     try:
-        inspector = inspect(engines["assets"])
-        if not inspector.has_table("totalassets"):
+        # 1. Fetch totalassets dynamically
+        inspector_assets = inspect(engines["assets"])
+        if not inspector_assets.has_table("totalassets"):
             return []
-
-        query = text("""
-            SELECT 
-                a.*,
-                e.email,
-                e.mob_number AS phone_number
-            FROM totalassets a 
-            LEFT JOIN employee.yamatoemployee e ON a.assigned_to = e.name
-        """)
+            
         with engines["assets"].connect() as connection:
-            result = connection.execute(query)
-            rows = [dict(row) for row in result.mappings().all()]
-        return rows
+            assets_rows = [dict(row) for row in connection.execute(text("SELECT * FROM totalassets")).mappings().all()]
+            
+        # 2. Fetch yamatoemployee dynamically
+        employees = []
+        inspector_emp = inspect(engines["employee"])
+        if inspector_emp.has_table("yamatoemployee"):
+            with engines["employee"].connect() as connection:
+                employees = [dict(row) for row in connection.execute(text("SELECT * FROM yamatoemployee")).mappings().all()]
+                
+        # 3. Create a map of employee name -> email/phone
+        emp_map = {}
+        for emp in employees:
+            # Find name, email, and phone keys dynamically
+            name_key = next((k for k in emp.keys() if k.lower().replace("_", "").replace(" ", "") == "name"), None)
+            email_key = next((k for k in emp.keys() if "email" in k.lower()), None)
+            phone_key = next((k for k in emp.keys() if "phone" in k.lower() or "mobile" in k.lower() or "mob" in k.lower() or "contact" in k.lower()), None)
+            
+            if name_key:
+                name_val = str(emp.get(name_key) or "").strip().lower()
+                if name_val:
+                    emp_map[name_val] = {
+                        "email": emp.get(email_key) if email_key else None,
+                        "phone_number": emp.get(phone_key) if phone_key else None
+                    }
+                
+        # 4. Merge asset rows with matching employee details
+        merged = []
+        for asset in assets_rows:
+            # Find assigned column for name (prioritize names, exclude IDs/emails/numbers)
+            assign_col = None
+            for k in asset.keys():
+                kl = k.lower().replace("_", "").replace(" ", "")
+                if kl in ["employeename", "assignedto", "assignee", "workername", "username"]:
+                    assign_col = k
+                    break
+            
+            if not assign_col:
+                for k in asset.keys():
+                    kl = k.lower()
+                    if ("employee" in kl or "assign" in kl or "worker" in kl) and "name" in kl:
+                        assign_col = k
+                        break
+                        
+            if not assign_col:
+                for k in asset.keys():
+                    kl = k.lower()
+                    if any(x in kl for x in ["assign", "employee", "worker", "user"]) and not any(x in kl for x in ["id", "email", "phone", "number", "contact", "date"]):
+                        assign_col = k
+                        break
+                        
+            if not assign_col:
+                assign_col = next((k for k in asset.keys() if "assign" in k.lower() or "employee" in k.lower() or "worker" in k.lower()), None)
+            assigned_name = ""
+            if assign_col:
+                assigned_name = str(asset.get(assign_col) or "").strip()
+                
+            match_details = emp_map.get(assigned_name.lower(), {"email": None, "phone_number": None})
+            
+            asset_dict = dict(asset)
+            asset_dict["email"] = match_details["email"]
+            asset_dict["phone_number"] = match_details["phone_number"]
+            # Enforce presence of assigned_to property for frontend mapping
+            if assign_col and assign_col != "assigned_to":
+                asset_dict["assigned_to"] = assigned_name
+                
+            # Replace NaNs with None to avoid JSON validation errors
+            for k, v in asset_dict.items():
+                if isinstance(v, float) and math.isnan(v):
+                    asset_dict[k] = None
+                    
+            merged.append(asset_dict)
+            
+        return merged
     except Exception as e:
-        print("!!! ASSIGNED ASSETS CROSS JOIN ERROR !!!:", str(e))
-        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
+        print("!!! ASSIGNED ASSETS DYNAMIC MERGE ERROR !!!:", str(e))
+        raise HTTPException(status_code=500, detail=f"Database error occurred: {str(e)}")
 
 @app.post("/api/login")
 def login_user(user: UserSchema):
@@ -319,9 +464,9 @@ class ChangePasswordSchema(BaseModel):
 def change_password(payload: ChangePasswordSchema):
     """Verifies the current password then saves a new bcrypt hash."""
     try:
-        with engines["login"].connect() as connection:
+        with engines["yamato_assets"].connect() as connection:
             result = connection.execute(
-                text("SELECT * FROM Login WHERE Username = :username"),
+                text("SELECT * FROM login WHERE username = :username"),
                 {"username": payload.username}
             )
             row = result.mappings().first()
@@ -330,15 +475,15 @@ def change_password(payload: ChangePasswordSchema):
             raise HTTPException(status_code=404, detail="User not found.")
 
         user_data = dict(row)
-        db_password = user_data.get("Password") or user_data.get("password")
+        db_password = user_data.get("password")
 
         if not verify_password(payload.current_password, db_password):
             raise HTTPException(status_code=401, detail="Current password is incorrect.")
 
         new_hashed = hash_password(payload.new_password)
-        with engines["login"].connect() as connection:
+        with engines["yamato_assets"].connect() as connection:
             connection.execute(
-                text("UPDATE Login SET Password = :new_pw WHERE Username = :username"),
+                text("UPDATE login SET password = :new_pw WHERE username = :username"),
                 {"new_pw": new_hashed, "username": payload.username}
             )
             connection.commit()
@@ -390,13 +535,13 @@ def purge_database_table(db_name: str, table_name: str, payload: PurgeVerificati
 def add_asset_manually(asset: AssetSchema):
     try:
         query = text("""
-            INSERT INTO Assets (name, serialNo, purchase_date, asset_type, status, Remarks) 
-            VALUES (:name, :serialNo, :purchase_date, :asset_type, :status, :remarks)
+            INSERT INTO Assets (name, `serial No.`, purchase_date, asset_type, status, Remarks) 
+            VALUES (:name, :serial No., :purchase_date, :asset_type, :status, :remarks)
         """)
         with engines["assets"].connect() as connection:
             connection.execute(query, {
                 "name": asset.name,
-                "serialNo": asset.serialNo,
+                "serial No.": asset.serialNo,
                 "purchase_date": asset.purchase_date,
                 "asset_type": asset.asset_type,
                 "status": asset.status,
@@ -410,6 +555,21 @@ def add_asset_manually(asset: AssetSchema):
 @app.post("/api/users/employee", status_code=201)
 def add_new_employee_record(emp: EmployeeSchema):
     try:
+        # Ensure table exists
+        create_query = text("""
+            CREATE TABLE IF NOT EXISTS yamatoemployee (
+                empId VARCHAR(50) PRIMARY KEY,
+                name VARCHAR(100),
+                email VARCHAR(100),
+                mob_number VARCHAR(20),
+                department VARCHAR(100),
+                designation VARCHAR(100)
+            )
+        """)
+        with engines["employee"].connect() as connection:
+            connection.execute(create_query)
+            connection.commit()
+
         query = text("""
             INSERT INTO yamatoemployee (empId, name, email, mob_number, department, designation) 
             VALUES (:emp_id, :name, :email, :mob_number, :department, :designation)
@@ -432,20 +592,92 @@ def add_new_employee_record(emp: EmployeeSchema):
 @app.post("/api/regAssets", status_code=201)
 def add_registered_asset(asset: AssetSchema):
     try:
-        query = text("""
-            INSERT INTO totalassets (name, serialNo, purchase_date, asset_type, status, Remarks) 
-            VALUES (:name, :serialNo, :purchase_date, :asset_type, :status, :remarks)
+        # Ensure table exists
+        create_query = text("""
+            CREATE TABLE IF NOT EXISTS totalassets (
+                asset_id VARCHAR(50) PRIMARY KEY,
+                name VARCHAR(100),
+                category VARCHAR(100),
+                serial_no VARCHAR(100),
+                assigned_to VARCHAR(100),
+                assigned_date DATETIME,
+                status VARCHAR(50),
+                email_id VARCHAR(100),
+                contact_no VARCHAR(20),
+                return_due_date DATETIME
+            )
         """)
         with engines["assets"].connect() as connection:
-            connection.execute(query, {
-                "name": asset.name,
-                "serialNo": asset.serialNo,
-                "purchase_date": asset.purchase_date,
-                "asset_type": asset.asset_type,
-                "status": asset.status,
-                "remarks": asset.Remarks
-            })      
+            connection.execute(create_query)
             connection.commit()
+
+        # Inspect columns in totalassets
+        inspector = inspect(engines["assets"])
+        columns = [col['name'].lower() for col in inspector.get_columns("totalassets")]
+
+        # Build dynamic mapping
+        id_col = "asset_id"
+        for candidate in ["asset_id", "assetid", "asset_id."]:
+            if candidate.lower() in columns:
+                id_col = candidate
+                break
+
+        name_col = "name"
+        for candidate in ["name", "asset_name", "assetname"]:
+            if candidate.lower() in columns:
+                name_col = candidate
+                break
+
+        cat_col = "category"
+        for candidate in ["category", "asset_type", "assettype", "type"]:
+            if candidate.lower() in columns:
+                cat_col = candidate
+                break
+
+        serial_col = "serial_no"
+        for candidate in ["serial_no", "serial_no.", "serialno", "serial"]:
+            if candidate.lower() in columns:
+                serial_col = candidate
+                break
+
+        status_col = "status"
+        for candidate in ["status"]:
+            if candidate.lower() in columns:
+                status_col = candidate
+                break
+
+        remarks_col = None
+        for candidate in ["remarks", "description"]:
+            if candidate.lower() in columns:
+                remarks_col = candidate
+                break
+
+        # Generate unique ID
+        with engines["assets"].connect() as connection:
+            count = connection.execute(text("SELECT COUNT(*) FROM totalassets")).scalar() or 0
+        new_id = f"AST{1000 + count + 1}"
+
+        insert_cols = [id_col, name_col, cat_col, serial_col, status_col]
+        params = {
+            "id": new_id,
+            "name": asset.name,
+            "category": asset.asset_type,
+            "serial": asset.serialNo,
+            "status": asset.status
+        }
+        placeholders = [":id", ":name", ":category", ":serial", ":status"]
+
+        if remarks_col:
+            insert_cols.append(remarks_col)
+            placeholders.append(":remarks")
+            params["remarks"] = asset.Remarks
+
+        escaped_cols = [f"`{col}`" for col in insert_cols]
+        query_str = f"INSERT INTO totalassets ({', '.join(escaped_cols)}) VALUES ({', '.join(placeholders)})"
+        with engines["assets"].connect() as connection:
+            connection.execute(text(query_str), params)
+            connection.commit()
+
         return {"success": True, "message": "Asset successfully logged to registry."}
     except Exception as e:
         print("!!! REGISTRATION ENDPOINT ERROR !!!:", str(e))
@@ -598,7 +830,10 @@ def get_asset_depreciation(schedule: str = "1year"):
 @app.get('/api/assets/count')
 def get_total_assets_count():
     try:
-        query = text("SELECT COUNT(assetid) FROM currentassets")
+        inspector = inspect(engines["registeredassets"])
+        if not inspector.has_table("currentassets"):
+            return {'success': True, "total_assets": 0}
+        query = text("SELECT COUNT(*) FROM currentassets")
 
         with engines['registeredassets'].connect() as connection:
             result_count = connection.execute(query).scalar()
@@ -613,17 +848,22 @@ def get_total_assets_count():
 @app.get("/api/assets/status-distribution")
 def get_asset_status_distribution():
     try:
-        # Group metrics by status from your active inventory table
-        query = text("""
-            SELECT assettype, COUNT(assetid) as total 
-            FROM currentassets 
-            GROUP BY assettype
-        """)
+        inspector = inspect(engines["registeredassets"])
+        if not inspector.has_table("currentassets"):
+            return {"success": True, "distribution": {}}
+        columns = [col['name'].lower() for col in inspector.get_columns("currentassets")]
+        
+        type_col = "category"
+        for candidate in ["category", "asset_type", "assettype", "type"]:
+            if candidate in columns:
+                type_col = candidate
+                break
+
+        query = text(f"SELECT {type_col}, COUNT(*) as total FROM currentassets GROUP BY {type_col}")
         
         with engines["registeredassets"].connect() as connection:
             result = connection.execute(query).fetchall()
             
-        # Format the SQL response into a clean key-value pair dictionary
         distribution = {row[0] if row[0] else "Unknown": row[1] for row in result}
         return {"success": True, "distribution": distribution}
         
@@ -636,11 +876,10 @@ def get_asset_status_distribution():
 @app.get("/api/assets/active-count")
 def get_active_assets_count():
     try:
-        # Counts only assets where status is 'In Use' or 'Active'
-        query = text("""
-            SELECT COUNT(assetid) FROM currentassets 
-            WHERE LOWER(status) IN ('in use', 'active')
-        """)
+        inspector = inspect(engines["registeredassets"])
+        if not inspector.has_table("currentassets"):
+            return {"success": True, "active_assets": 0}
+        query = text("SELECT COUNT(*) FROM currentassets WHERE LOWER(status) IN ('in use', 'active')")
         with engines["registeredassets"].connect() as connection:
             result_count = connection.execute(query).scalar()
         return {"success": True, "active_assets": result_count or 0}
@@ -652,8 +891,18 @@ def get_active_assets_count():
 @app.get("/api/assets/categories-count")
 def get_unique_categories_count():
     try:
-        # Counts how many distinct asset types exist in your database
-        query = text("SELECT COUNT(DISTINCT assettype) FROM currentassets WHERE assettype IS NOT NULL AND assettype != ''")
+        inspector = inspect(engines["registeredassets"])
+        if not inspector.has_table("currentassets"):
+            return {"success": True, "total_categories": 0}
+        columns = [col['name'].lower() for col in inspector.get_columns("currentassets")]
+        
+        type_col = "category"
+        for candidate in ["category", "asset_type", "assettype", "type"]:
+            if candidate in columns:
+                type_col = candidate
+                break
+                
+        query = text(f"SELECT COUNT(DISTINCT {type_col}) FROM currentassets WHERE {type_col} IS NOT NULL AND {type_col} != ''")
         with engines["registeredassets"].connect() as connection:
             result_count = connection.execute(query).scalar()
         return {"success": True, "total_categories": result_count or 0}
@@ -761,15 +1010,30 @@ def _build_pdf(title: str, columns: list, rows: list, subtitle: str = "") -> io.
     styles = getSampleStyleSheet()
     story = []
 
-    # Title
-    title_style = ParagraphStyle(
-        "ReportTitle",
-        parent=styles["Title"],
-        fontSize=18,
-        textColor=colors.HexColor("#1a237e"),
-        spaceAfter=4,
+    # --- LOGO HEADER ---
+    LOGO_PATH = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),  # Backend/python/
+        "..", "..",                                   # up to Yamato root
+        "frontend", "images", "logo.jpg"
     )
-    story.append(Paragraph("Yamato Asset Management", title_style))
+    LOGO_PATH = os.path.normpath(LOGO_PATH)
+    if os.path.exists(LOGO_PATH):
+        logo = RLImage(LOGO_PATH, width=3.8 * cm, height=1.6 * cm)
+        logo.hAlign = "LEFT"
+        story.append(logo)
+        story.append(Spacer(1, 0.15 * cm))
+
+    # IT ASSET MANAGEMENT sub-heading
+    it_style = ParagraphStyle(
+        "ITAsset",
+        parent=styles["Normal"],
+        fontSize=11,
+        textColor=colors.HexColor("#f5cf04"),
+        fontName="Helvetica-Bold",
+        spaceAfter=2,
+        letterSpacing=2,
+    )
+    story.append(Paragraph("IT ASSET MANAGEMENT", it_style))
 
     sub_style = ParagraphStyle(
         "SubTitle",
@@ -806,8 +1070,8 @@ def _build_pdf(title: str, columns: list, rows: list, subtitle: str = "") -> io.
     table = Table(table_data, colWidths=[col_width] * col_count, repeatRows=1)
     table.setStyle(TableStyle([
         # Header
-        ("BACKGROUND",   (0, 0), (-1, 0),  colors.HexColor("#1a237e")),
-        ("TEXTCOLOR",    (0, 0), (-1, 0),  colors.white),
+        ("BACKGROUND",   (0, 0), (-1, 0),  colors.HexColor("#f5cf04")),
+        ("TEXTCOLOR",    (0, 0), (-1, 0),  colors.HexColor("#1a1a1a")),
         ("FONTNAME",     (0, 0), (-1, 0),  "Helvetica-Bold"),
         ("FONTSIZE",     (0, 0), (-1, 0),  8),
         ("ALIGN",        (0, 0), (-1, 0),  "CENTER"),
@@ -816,14 +1080,14 @@ def _build_pdf(title: str, columns: list, rows: list, subtitle: str = "") -> io.
         # Body rows
         ("FONTNAME",     (0, 1), (-1, -1), "Helvetica"),
         ("FONTSIZE",     (0, 1), (-1, -1), 7),
-        ("ROWBACKGROUNDS",(0, 1), (-1, -1), [colors.white, colors.HexColor("#e8eaf6")]),
+        ("ROWBACKGROUNDS",(0, 1), (-1, -1), [colors.white, colors.HexColor("#fff9e0")]),
         ("ALIGN",        (0, 1), (-1, -1), "LEFT"),
         ("VALIGN",       (0, 0), (-1, -1), "MIDDLE"),
         ("TOPPADDING",   (0, 1), (-1, -1), 4),
         ("BOTTOMPADDING",(0, 1), (-1, -1), 4),
         # Grid
-        ("GRID",         (0, 0), (-1, -1), 0.4, colors.HexColor("#c5cae9")),
-        ("BOX",          (0, 0), (-1, -1), 1,   colors.HexColor("#1a237e")),
+        ("GRID",         (0, 0), (-1, -1), 0.4, colors.HexColor("#e0c200")),
+        ("BOX",          (0, 0), (-1, -1), 1,   colors.HexColor("#f5cf04")),
     ]))
     story.append(table)
 
@@ -832,83 +1096,321 @@ def _build_pdf(title: str, columns: list, rows: list, subtitle: str = "") -> io.
     return buffer
 
 
+def _save_report_to_portal(filename: str, content: bytes):
+    """Saves a backup copy of the generated report inside the portal's saved_reports directory."""
+    try:
+        import os
+        from datetime import datetime
+        saved_dir = os.path.join(os.getcwd(), "saved_reports")
+        os.makedirs(saved_dir, exist_ok=True)
+        # Append date-timestamp to prevent overwriting previous versions
+        base, ext = os.path.splitext(filename)
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        unique_filename = f"{base}_{timestamp}{ext}"
+        file_path = os.path.join(saved_dir, unique_filename)
+        with open(file_path, "wb") as f:
+            f.write(content)
+        print(f"--- Backup Copy Saved to Portal: {file_path} ---")
+    except Exception as e:
+        print("!!! PORTAL REPORT PERSISTENCE CRASH !!!:", str(e))
+
+
+def _fetch_table_data(db_name: str, table_name: str) -> tuple:
+    """Dynamically fetches all columns and rows from a database table."""
+    try:
+        inspector = inspect(engines[db_name])
+        if not inspector.has_table(table_name):
+            return [], []
+            
+        columns = [col['name'] for col in inspector.get_columns(table_name)]
+        query = text(f"SELECT * FROM {table_name}")
+        with engines[db_name].connect() as conn:
+            result = conn.execute(query)
+            rows = [dict(row) for row in result.mappings().all()]
+        return columns, rows
+    except Exception as e:
+        print(f"!!! REPORT TABLE FETCH CRASH ({db_name}.{table_name}) !!!:", str(e))
+        return [], []
+
+
+def _build_svg(title: str, subtitle: str, columns: list, rows: list) -> str:
+    """Generates a clean vector SVG graphic representing the report table."""
+    import base64
+    row_height = 30
+    header_height = 110
+    table_header_height = 40
+    padding = 20
+
+    width = 1200
+    height = header_height + table_header_height + len(rows) * row_height + padding * 2 + 50
+
+    svg = []
+    svg.append(f'<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 {width} {height}" width="100%" height="{height}" style="background-color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, sans-serif;">')
+
+    # Styles
+    svg.append("""<style>
+        .it-heading { font-size: 16px; font-weight: bold; fill: #f5cf04; letter-spacing: 3px; }
+        .title { font-size: 18px; font-weight: bold; fill: #1a202c; }
+        .subtitle { font-size: 13px; fill: #718096; }
+        .header-bg { fill: #f5cf04; }
+        .header-text { font-size: 12px; font-weight: bold; fill: #1a1a1a; text-anchor: start; }
+        .row-text { font-size: 11px; fill: #2d3748; }
+        .grid-line { stroke: #e2e8f0; stroke-width: 1; }
+    </style>""")
+
+    # Logo image (base64 embedded)
+    LOGO_PATH = os.path.normpath(os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        "..", "..", "frontend", "images", "logo.jpg"
+    ))
+    if os.path.exists(LOGO_PATH):
+        with open(LOGO_PATH, "rb") as f:
+            logo_b64 = base64.b64encode(f.read()).decode("utf-8")
+        svg.append(f'<image x="{padding}" y="10" width="140" height="60" href="data:image/jpeg;base64,{logo_b64}"/>')
+
+    # IT ASSET MANAGEMENT label
+    svg.append(f'<text x="{padding}" y="86" class="it-heading">IT ASSET MANAGEMENT</text>')
+
+    # Report title & subtitle
+    svg.append(f'<text x="{padding}" y="106" class="title">{title}</text>')
+    svg.append(f'<text x="{padding}" y="{header_height - 6}" class="subtitle">{subtitle}</text>')
+
+    # Table headers
+    col_width = (width - padding * 2) / len(columns)
+    y = header_height + padding
+
+    # Header background
+    svg.append(f'<rect x="{padding}" y="{y}" width="{width - padding * 2}" height="{table_header_height}" class="header-bg" rx="6"/>')
+
+    for i, col in enumerate(columns):
+        col_name = col.replace("_", " ").upper()
+        x = padding + i * col_width + 15
+        svg.append(f'<text x="{x}" y="{y + 24}" class="header-text">{col_name}</text>')
+
+    y += table_header_height
+
+    # Rows
+    for r_idx, row in enumerate(rows):
+        fill = "#ffffff" if r_idx % 2 == 0 else "#fff9e0"
+        svg.append(f'<rect x="{padding}" y="{y}" width="{width - padding * 2}" height="{row_height}" fill="{fill}"/>')
+        svg.append(f'<line x1="{padding}" y1="{y + row_height}" x2="{width - padding}" y2="{y + row_height}" class="grid-line"/>')
+
+        for c_idx, col in enumerate(columns):
+            val = str(row.get(col) if row.get(col) is not None else "")
+            x = padding + c_idx * col_width + 15
+            max_char = int(col_width / 8)
+            if len(val) > max_char:
+                val = val[:max_char - 3] + "..."
+            svg.append(f'<text x="{x}" y="{y + 19}" class="row-text">{val}</text>')
+        y += row_height
+
+    svg.append('</svg>')
+    return "\n".join(svg)
+
+
 @app.get("/api/reports/audit-trail")
-def generate_audit_trail_report():
-    """PDF: Full asset audit trail — all assets with assigned employee details."""
-    rows = _fetch_assigned_assets_data()
-    columns = ["assetId", "asset_name", "asset_type", "status",
-               "purchase_date", "employee_name", "email", "phone_number", "department", "remarks"]
+def generate_audit_trail_report(security_key: Optional[str] = None):
+    """PDF: Assets Lists Report — dynamically builds from assets.totalassets."""
+    if not security_key or security_key != "Deepak@yamato@2022":
+        raise HTTPException(status_code=401, detail="Invalid administrator master key.")
+
+    columns, rows = _fetch_table_data("assets", "totalassets")
     buffer = _build_pdf(
-        title="Asset Audit Trail Report",
+        title="Assets Lists Report",
         subtitle=f"Total Records: {len(rows)}",
         columns=columns,
         rows=rows
     )
+    # Save a backup copy on the portal
+    pdf_bytes = buffer.getvalue()
+    _save_report_to_portal("assets_lists_report.pdf", pdf_bytes)
+    buffer.seek(0)
+
     return StreamingResponse(
         buffer,
         media_type="application/pdf",
-        headers={"Content-Disposition": "attachment; filename=audit_trail_report.pdf"}
+        headers={"Content-Disposition": "attachment; filename=assets_lists_report.pdf"}
+    )
+
+
+@app.get("/api/reports/audit-trail/svg")
+def generate_audit_trail_report_svg(security_key: Optional[str] = None):
+    """SVG: Assets Lists Report — dynamically builds from assets.totalassets."""
+    from fastapi import Response
+    if not security_key or security_key != "Deepak@yamato@2022":
+        raise HTTPException(status_code=401, detail="Invalid administrator master key.")
+
+    columns, rows = _fetch_table_data("assets", "totalassets")
+    svg_str = _build_svg(
+        title="Assets Lists Report",
+        subtitle=f"Total Records: {len(rows)}",
+        columns=columns,
+        rows=rows
+    )
+    # Save a backup copy on the portal
+    _save_report_to_portal("assets_lists_report.svg", svg_str.encode("utf-8"))
+
+    return Response(
+        content=svg_str,
+        media_type="image/svg+xml",
+        headers={"Content-Disposition": "attachment; filename=assets_lists_report.svg"}
     )
 
 
 @app.get("/api/reports/maintenance-schedule")
-def generate_maintenance_schedule_report():
-    """PDF: Maintenance schedule — assets sorted by purchase date showing oldest first."""
-    rows = _fetch_assigned_assets_data()
-    # Sort by purchase date ascending (oldest assets need maintenance soonest)
-    rows_sorted = sorted(
-        rows,
-        key=lambda r: str(r.get("purchase_date") or "9999"),
-    )
-    columns = ["assetId", "asset_name", "asset_type", "status", "purchase_date", "employee_name", "department", "remarks"]
+def generate_maintenance_schedule_report(security_key: Optional[str] = None):
+    """PDF: Inventory Report — dynamically builds from registeredassets.currentassets."""
+    if not security_key or security_key != "Deepak@yamato@2022":
+        raise HTTPException(status_code=401, detail="Invalid administrator master key.")
+
+    columns, rows = _fetch_table_data("registeredassets", "currentassets")
     buffer = _build_pdf(
-        title="Maintenance Schedule Report",
-        subtitle="Sorted by Purchase Date (Oldest First — Priority Maintenance)",
+        title="Inventory Report",
+        subtitle=f"Total Records: {len(rows)}",
         columns=columns,
-        rows=rows_sorted
+        rows=rows
     )
+    # Save a backup copy on the portal
+    pdf_bytes = buffer.getvalue()
+    _save_report_to_portal("inventory_report.pdf", pdf_bytes)
+    buffer.seek(0)
+
     return StreamingResponse(
         buffer,
         media_type="application/pdf",
-        headers={"Content-Disposition": "attachment; filename=maintenance_schedule_report.pdf"}
+        headers={"Content-Disposition": "attachment; filename=inventory_report.pdf"}
+    )
+
+
+@app.get("/api/reports/maintenance-schedule/svg")
+def generate_maintenance_schedule_report_svg(security_key: Optional[str] = None):
+    """SVG: Inventory Report — dynamically builds from registeredassets.currentassets."""
+    from fastapi import Response
+    if not security_key or security_key != "Deepak@yamato@2022":
+        raise HTTPException(status_code=401, detail="Invalid administrator master key.")
+
+    columns, rows = _fetch_table_data("registeredassets", "currentassets")
+    svg_str = _build_svg(
+        title="Inventory Report",
+        subtitle=f"Total Records: {len(rows)}",
+        columns=columns,
+        rows=rows
+    )
+    # Save a backup copy on the portal
+    _save_report_to_portal("inventory_report.svg", svg_str.encode("utf-8"))
+
+    return Response(
+        content=svg_str,
+        media_type="image/svg+xml",
+        headers={"Content-Disposition": "attachment; filename=inventory_report.svg"}
     )
 
 
 @app.get("/api/reports/user-activity-log")
-def generate_user_activity_log_report():
-    """PDF: User activity log — employee-centric view of all asset assignments."""
-    rows = _fetch_assigned_assets_data()
-    # Sort by employee name for easier reading
-    rows_sorted = sorted(rows, key=lambda r: str(r.get("employee_name") or "ZZZ"))
-    columns = ["employee_name", "email", "phone_number", "department", "assetId", "asset_name", "asset_type", "status"]
+def generate_user_activity_log_report(security_key: Optional[str] = None):
+    """PDF: Employees Report — dynamically builds from employee.yamatoemployee."""
+    if not security_key or security_key != "Deepak@yamato@2022":
+        raise HTTPException(status_code=401, detail="Invalid administrator master key.")
+
+    columns, rows = _fetch_table_data("employee", "yamatoemployee")
     buffer = _build_pdf(
-        title="User Activity Log Report",
-        subtitle="Employee Asset Assignment Overview — Sorted by Employee Name",
+        title="Employees Report",
+        subtitle=f"Total Records: {len(rows)}",
         columns=columns,
-        rows=rows_sorted
+        rows=rows
     )
+    # Save a backup copy on the portal
+    pdf_bytes = buffer.getvalue()
+    _save_report_to_portal("employees_report.pdf", pdf_bytes)
+    buffer.seek(0)
+
     return StreamingResponse(
         buffer,
         media_type="application/pdf",
-        headers={"Content-Disposition": "attachment; filename=user_activity_log_report.pdf"}
+        headers={"Content-Disposition": "attachment; filename=employees_report.pdf"}
+    )
+
+
+@app.get("/api/reports/user-activity-log/svg")
+def generate_user_activity_log_report_svg(security_key: Optional[str] = None):
+    """SVG: Employees Report — dynamically builds from employee.yamatoemployee."""
+    from fastapi import Response
+    if not security_key or security_key != "Deepak@yamato@2022":
+        raise HTTPException(status_code=401, detail="Invalid administrator master key.")
+
+    columns, rows = _fetch_table_data("employee", "yamatoemployee")
+    svg_str = _build_svg(
+        title="Employees Report",
+        subtitle=f"Total Records: {len(rows)}",
+        columns=columns,
+        rows=rows
+    )
+    # Save a backup copy on the portal
+    _save_report_to_portal("employees_report.svg", svg_str.encode("utf-8"))
+
+    return Response(
+        content=svg_str,
+        media_type="image/svg+xml",
+        headers={"Content-Disposition": "attachment; filename=employees_report.svg"}
     )
 
 
 @app.get("/api/reports/checkout-history")
-def generate_checkout_history_report():
-    """PDF: Check-out history — assets that are currently assigned (not unassigned)."""
-    rows = _fetch_assigned_assets_data()
-    # Filter only rows where an employee is actually assigned
-    checked_out = [r for r in rows if r.get("employee_name") and str(r["employee_name"]).strip() != ""]
-    columns = ["assetId", "asset_name", "asset_type", "employee_name", "email", "department", "phone_number", "status", "purchase_date"]
+def generate_checkout_history_report(security_key: Optional[str] = None):
+    """PDF: Check-out history — dynamically filters totalassets."""
+    if not security_key or security_key != "Deepak@yamato@2022":
+        raise HTTPException(status_code=401, detail="Invalid administrator master key.")
+
+    columns, rows = _fetch_table_data("assets", "totalassets")
+    assigned_col = "assigned_to"
+    for candidate in ["assigned_to", "assignedto", "employee"]:
+        if candidate.lower() in [col.lower() for col in columns]:
+            assigned_col = candidate
+            break
+    checked_out = [r for r in rows if r.get(assigned_col) and str(r[assigned_col]).strip() != ""]
     buffer = _build_pdf(
         title="Asset Check-out History Report",
         subtitle=f"Currently Checked-out Assets: {len(checked_out)} of {len(rows)} total",
         columns=columns,
         rows=checked_out
     )
+    # Save a backup copy on the portal
+    pdf_bytes = buffer.getvalue()
+    _save_report_to_portal("checkout_history_report.pdf", pdf_bytes)
+    buffer.seek(0)
+
     return StreamingResponse(
         buffer,
         media_type="application/pdf",
         headers={"Content-Disposition": "attachment; filename=checkout_history_report.pdf"}
+    )
+
+
+@app.get("/api/reports/checkout-history/svg")
+def generate_checkout_history_report_svg(security_key: Optional[str] = None):
+    """SVG: Check-out history — dynamically filters totalassets."""
+    from fastapi import Response
+    if not security_key or security_key != "Deepak@yamato@2022":
+        raise HTTPException(status_code=401, detail="Invalid administrator master key.")
+
+    columns, rows = _fetch_table_data("assets", "totalassets")
+    assigned_col = "assigned_to"
+    for candidate in ["assigned_to", "assignedto", "employee"]:
+        if candidate.lower() in [col.lower() for col in columns]:
+            assigned_col = candidate
+            break
+    checked_out = [r for r in rows if r.get(assigned_col) and str(r[assigned_col]).strip() != ""]
+    svg_str = _build_svg(
+        title="Asset Check-out History Report",
+        subtitle=f"Currently Checked-out Assets: {len(checked_out)} of {len(rows)} total",
+        columns=columns,
+        rows=checked_out
+    )
+    # Save a backup copy on the portal
+    _save_report_to_portal("checkout_history_report.svg", svg_str.encode("utf-8"))
+
+    return Response(
+        content=svg_str,
+        media_type="image/svg+xml",
+        headers={"Content-Disposition": "attachment; filename=checkout_history_report.svg"}
     )

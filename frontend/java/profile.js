@@ -3,7 +3,7 @@
  * 1. CONFIGURATION & STATE MANAGER REGISTRY
  * ====================================================================
  */
-const BACKEND_BASE_URL = 'http://127.0.0.1:8000';
+const BACKEND_BASE_URL = '';  // Empty string = same origin (FastAPI serves both frontend and API)
 
 // Global hooks used to track active dynamic deletion targets
 let activeDbTarget = "";
@@ -37,15 +37,15 @@ const DomElements = {
  * ====================================================================
  */
 const navMap = {
-    'home': 'home.html',
-    'assets-list': 'assets list.html',
-    'inventory': 'inventory.html',
-    'reports': 'reports.html',
-    'find': 'inventory.html',
-    'Register-Asset': 'register asset.html',
-    'assests-list': 'assets list.html',
-    'Register-New-User': 'register new user.html',
-    'profilee': 'profile.html'
+    'home': '/home',
+    'assets-list': '/assets-list',
+    'inventory': '/inventory',
+    'reports': '/reports',
+    'find': '/inventory',
+    'Register-Asset': '/register-asset',
+    'assests-list': '/assets-list',
+    'Register-New-User': '/register-user',
+    'profilee': '/profile'
 };
 
 Object.entries(navMap).forEach(([id, targetPage]) => {
@@ -56,7 +56,7 @@ Object.entries(navMap).forEach(([id, targetPage]) => {
 
 document.getElementById('log-out')?.addEventListener("click", () => {
     showResultModal(true, "Logging Out", "Log-Out Successful! Transferring back to security view.");
-    setTimeout(() => { window.location.href = "login.html"; }, 1500);
+    setTimeout(() => { window.location.href = "/login"; }, 1500);
 });
 
 /**
@@ -323,6 +323,179 @@ window.addEventListener('DOMContentLoaded', () => {
     setupPasswordToggle();
     loadProfileCredentials();
     setupPasswordReset();
+    loadEmployeeReports();
+});
+
+async function loadEmployeeReports() {
+    const detailsDiv = document.getElementById('details');
+    if (!detailsDiv) return;
+
+    try {
+        const res = await fetch(`${BACKEND_BASE_URL}/api/employee`);
+        if (!res.ok) throw new Error("Could not fetch employee list.");
+        const employees = await res.json();
+
+        // If the database is empty, show a guidance message
+        if (employees.length === 0) {
+            detailsDiv.innerHTML = `
+                <div style="text-align: center; color: #747d8c; padding: 20px; font-size: 14px;">
+                    <i class="ri-information-line" style="font-size: 24px; color: #f5cf04; display: block; margin-bottom: 8px;"></i>
+                    No employee records found. Please upload your employee spreadsheet above.
+                </div>
+            `;
+            return;
+        }
+
+        detailsDiv.innerHTML = "";
+        employees.forEach(emp => {
+            // Find name key dynamically
+            const nameKey = Object.keys(emp).find(k => k.toLowerCase().replace(/[^a-z]/g, '') === 'name') || 'name';
+            const empName = emp[nameKey] || "Unknown Employee";
+
+            const row = document.createElement('div');
+            row.className = 'employee-row';
+            row.innerHTML = `
+                <div class="sub-name" style="display: flex; align-items: center; gap: 8px;"><i class="ri-file-list-2-line"></i> ${empName}</div>
+                <div class="sub">
+                    <button class="special view-emp-btn" data-name="${empName}">View</button>
+                </div>
+            `;
+            detailsDiv.appendChild(row);
+        });
+
+        // Bind click events to the buttons
+        document.querySelectorAll('.view-emp-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const empName = btn.dataset.name;
+                await openEmployeeCard(empName, employees);
+            });
+        });
+
+    } catch (err) {
+        console.error("Employee reports list loading error:", err);
+        detailsDiv.innerHTML = `<div style="color: #ff4d4d; font-size: 14px; text-align: center; padding: 10px;">Failed to load employee list.</div>`;
+    }
+}
+
+async function openEmployeeCard(empName, employees) {
+    const modal = document.getElementById('employee-report-modal');
+    if (!modal) return;
+
+    // Helper to dynamically extract employee fields regardless of casing or schema spelling
+    const getEmpField = (empObj, keys) => {
+        if (!empObj) return "N/A";
+        for (let key of keys) {
+            if (empObj[key] !== undefined && empObj[key] !== null) return empObj[key];
+            const foundKey = Object.keys(empObj).find(k => k.toLowerCase().replace(/[^a-z0-9]/g, '') === key.toLowerCase().replace(/[^a-z0-9]/g, ''));
+            if (foundKey) return empObj[foundKey];
+        }
+        return "N/A";
+    };
+
+    // Search for employee details in our list
+    let emp = employees.find(e => {
+        const nameVal = getEmpField(e, ['name', 'employeeName', 'employee_name']);
+        return nameVal.toLowerCase() === empName.toLowerCase();
+    });
+    
+    if (!emp) {
+        emp = {
+            name: empName,
+            empId: "N/A",
+            email: "N/A",
+            mob_number: "N/A",
+            department: "N/A",
+            designation: "N/A"
+        };
+    }
+
+    // Set employee details on card using dynamic mappings
+    const finalName = getEmpField(emp, ['name', 'employeeName', 'employee_name']);
+    const finalId = getEmpField(emp, ['empId', 'employeeId', 'employee_id', 'id']);
+    const finalDept = getEmpField(emp, ['department', 'dept', 'location', 'departments']);
+    const finalEmail = getEmpField(emp, ['email', 'emailId', 'email_id', 'employee_email']);
+    const finalMobile = getEmpField(emp, ['mob_number', 'mobNo', 'mobile', 'phone', 'phone_number', 'contact_no', 'phone_no']);
+    const finalDesg = getEmpField(emp, ['designation', 'desg', 'role', 'title']);
+
+    document.getElementById('emp-card-name').innerText = finalName !== "N/A" ? finalName : empName;
+    document.getElementById('emp-card-id').innerText = finalId;
+    document.getElementById('emp-card-dept').innerText = finalDept;
+    document.getElementById('emp-card-email').innerText = finalEmail;
+    document.getElementById('emp-card-mobile').innerText = finalMobile;
+    document.getElementById('emp-card-desg').innerText = finalDesg;
+
+    const assetsBody = document.getElementById('emp-card-assets-body');
+    if (assetsBody) {
+        assetsBody.innerHTML = '<tr><td colspan="3" style="padding: 10px; text-align: center;">Loading assets...</td></tr>';
+        
+        try {
+            const res = await fetch(`${BACKEND_BASE_URL}/api/assigned-assets`);
+            if (res.ok) {
+                const assignedAssets = await res.json();
+                
+                // Filter assets assigned to this employee using flexible key lookup
+                const userAssets = assignedAssets.filter(asset => {
+                    // 1. Try to check asset.assigned_to first, since backend enforces it
+                    let assignedTo = asset.assigned_to || asset.assignedTo || '';
+                    
+                    // 2. Fallback to flexible keys, prioritizing employee name columns and excluding ID/email/phone
+                    if (!assignedTo) {
+                        const keys = Object.keys(asset);
+                        const nameKey = keys.find(k => {
+                            const kl = k.toLowerCase().replace(/_/g, '').replace(/ /g, '');
+                            return kl === 'employeename' || kl === 'assignedto' || kl === 'assignee' || kl === 'workername';
+                        }) || keys.find(k => {
+                            const kl = k.toLowerCase();
+                            return (kl.includes('employee') || kl.includes('assign') || kl.includes('worker')) && kl.includes('name');
+                        }) || keys.find(k => {
+                            const kl = k.toLowerCase();
+                            if (kl.includes('id') || kl.includes('email') || kl.includes('phone') || kl.includes('number') || kl.includes('contact') || kl.includes('date')) {
+                                return false;
+                            }
+                            return kl.includes('assign') || kl.includes('employee') || kl.includes('worker') || kl.includes('user');
+                        });
+                        
+                        assignedTo = nameKey ? String(asset[nameKey] || "") : "";
+                    }
+                    
+                    return assignedTo.toLowerCase().trim() === empName.toLowerCase().trim();
+                });
+
+                if (userAssets.length === 0) {
+                    assetsBody.innerHTML = '<tr><td colspan="3" style="padding: 10px; text-align: center; color: #999;">No assets assigned.</td></tr>';
+                } else {
+                    assetsBody.innerHTML = "";
+                    userAssets.forEach(asset => {
+                        const tr = document.createElement('tr');
+                        const id = asset.asset_id || asset.assetId || asset.assetid || "N/A";
+                        const name = asset.name || asset.assetName || asset.asset_name || "N/A";
+                        const status = asset.status || asset.currentStatus || "N/A";
+
+                        tr.innerHTML = `
+                            <td style="padding: 8px; border-bottom: 1px solid #ddd;">${id}</td>
+                            <td style="padding: 8px; border-bottom: 1px solid #ddd;">${name}</td>
+                            <td style="padding: 8px; border-bottom: 1px solid #ddd;"><span style="padding: 2px 6px; border-radius: 4px; font-size: 11px; background-color: #e2e8f0; color: #4a5568;">${status}</span></td>
+                        `;
+                        assetsBody.appendChild(tr);
+                    });
+                }
+            } else {
+                assetsBody.innerHTML = '<tr><td colspan="3" style="padding: 10px; text-align: center; color: #ff4d4d;">Failed to load assets.</td></tr>';
+            }
+        } catch (error) {
+            console.error("Assigned assets loading error:", error);
+            assetsBody.innerHTML = '<tr><td colspan="3" style="padding: 10px; text-align: center; color: #ff4d4d;">Error loading assets.</td></tr>';
+        }
+    }
+
+    modal.style.display = 'flex';
+}
+
+document.getElementById('employee-modal-close-btn')?.addEventListener('click', () => {
+    document.getElementById('employee-report-modal').style.display = 'none';
+});
+document.getElementById('employee-modal-close-btn-bottom')?.addEventListener('click', () => {
+    document.getElementById('employee-report-modal').style.display = 'none';
 });
 
 /**
@@ -497,7 +670,19 @@ function setupPasswordReset() {
             if (res.ok) {
                 window._resetCurrentPw = null;
                 closeModal(step2Modal);
-                showResultModal(true, 'Password Updated', 'Your password has been changed successfully. Please use the new password on your next login.');
+                showResultModal(true, 'Password Updated', 'Your password has been changed successfully. Redirecting to dashboard...');
+                
+                // Redirect on Close button click
+                const handleCloseRedirect = () => {
+                    DomElements.resultCloseBtn?.removeEventListener('click', handleCloseRedirect);
+                    window.location.href = "/home";
+                };
+                DomElements.resultCloseBtn?.addEventListener('click', handleCloseRedirect);
+
+                // Auto-redirect fallback after 3 seconds
+                setTimeout(() => {
+                    window.location.href = "/home";
+                }, 3000);
             } else {
                 if (step2Error) {
                     step2Error.innerText = result.detail || 'Failed to update password. Please try again.';

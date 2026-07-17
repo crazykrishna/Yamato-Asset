@@ -1,0 +1,866 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1200 2340" width="100%" height="2340" style="background-color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+<style>
+        .it-heading { font-size: 16px; font-weight: bold; fill: #f5cf04; letter-spacing: 3px; }
+        .title { font-size: 18px; font-weight: bold; fill: #1a202c; }
+        .subtitle { font-size: 13px; fill: #718096; }
+        .header-bg { fill: #f5cf04; }
+        .header-text { font-size: 12px; font-weight: bold; fill: #1a1a1a; text-anchor: start; }
+        .row-text { font-size: 11px; fill: #2d3748; }
+        .grid-line { stroke: #e2e8f0; stroke-width: 1; }
+    </style>
+<image x="20" y="10" width="140" height="60" href="data:image/jpeg;base64,/9j/4QAYRXhpZgAASUkqAAgAAAAAAAAAAAAAAP/sABFEdWNreQABAAQAAABkAAD/4QP7aHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLwA8P3hwYWNrZXQgYmVnaW49Iu+7vyIgaWQ9Ilc1TTBNcENlaGlIenJlU3pOVGN6a2M5ZCI/PiA8eDp4bXBtZXRhIHhtbG5zOng9ImFkb2JlOm5zOm1ldGEvIiB4OnhtcHRrPSJBZG9iZSBYTVAgQ29yZSA1LjMtYzAxMSA2Ni4xNDU2NjEsIDIwMTIvMDIvMDYtMTQ6NTY6MjcgICAgICAgICI+IDxyZGY6UkRGIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+IDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0idXVpZDo1RDIwODkyNDkzQkZEQjExOTE0QTg1OTBEMzE1MDhDOCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozMzBCQjU2NkQwQUQxMUVFODk1NkUxMTA5OUNFRjNGMyIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozMzBCQjU2NUQwQUQxMUVFODk1NkUxMTA5OUNFRjNGMyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBJbGx1c3RyYXRvciAyNC4zIChNYWNpbnRvc2gpIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6YzgzZTRiZDgtZGU2Yy00ZWM5LThiMTItMDUxZWM0MDBjNTcyIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOmM4M2U0YmQ4LWRlNmMtNGVjOS04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"/>
+<text x="20" y="86" class="it-heading">IT ASSET MANAGEMENT</text>
+<text x="20" y="106" class="title">Assets Lists Report</text>
+<text x="20" y="104" class="subtitle">Total Records: 70</text>
+<rect x="20" y="130" width="1160" height="40" class="header-bg" rx="6"/>
+<text x="35.0" y="154" class="header-text">ASSET ID</text>
+<text x="151.0" y="154" class="header-text">NAME</text>
+<text x="267.0" y="154" class="header-text">CATEGORY</text>
+<text x="383.0" y="154" class="header-text">SERIAL NO.</text>
+<text x="499.0" y="154" class="header-text">ASSIGNED TO</text>
+<text x="615.0" y="154" class="header-text">ASSIGNED DATE</text>
+<text x="731.0" y="154" class="header-text">STATUS</text>
+<text x="847.0" y="154" class="header-text">EMAIL ID</text>
+<text x="963.0" y="154" class="header-text">CONTACT NO.</text>
+<text x="1079.0" y="154" class="header-text">RETURN DUE DATE</text>
+<rect x="20" y="170" width="1160" height="30" fill="#ffffff"/>
+<line x1="20" y1="200" x2="1180" y2="200" class="grid-line"/>
+<text x="35.0" y="189" class="row-text">LPT001</text>
+<text x="151.0" y="189" class="row-text">ThinkPad X1...</text>
+<text x="267.0" y="189" class="row-text">Laptop</text>
+<text x="383.0" y="189" class="row-text">SN-83291-LPT</text>
+<text x="499.0" y="189" class="row-text">Aarav Sharma</text>
+<text x="615.0" y="189" class="row-text">2024-01-16 ...</text>
+<text x="731.0" y="189" class="row-text">active</text>
+<text x="847.0" y="189" class="row-text">aarav.sharm...</text>
+<text x="963.0" y="189" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="189" class="row-text">2026-01-16 ...</text>
+<rect x="20" y="200" width="1160" height="30" fill="#fff9e0"/>
+<line x1="20" y1="230" x2="1180" y2="230" class="grid-line"/>
+<text x="35.0" y="219" class="row-text">PC001</text>
+<text x="151.0" y="219" class="row-text">Dell UltraS...</text>
+<text x="267.0" y="219" class="row-text">Monitor</text>
+<text x="383.0" y="219" class="row-text">SN-48291-MON</text>
+<text x="499.0" y="219" class="row-text">Aarav Sharma</text>
+<text x="615.0" y="219" class="row-text">2024-01-16 ...</text>
+<text x="731.0" y="219" class="row-text">active</text>
+<text x="847.0" y="219" class="row-text">aarav.sharm...</text>
+<text x="963.0" y="219" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="219" class="row-text">2026-01-16 ...</text>
+<rect x="20" y="230" width="1160" height="30" fill="#ffffff"/>
+<line x1="20" y1="260" x2="1180" y2="260" class="grid-line"/>
+<text x="35.0" y="249" class="row-text">KB001</text>
+<text x="151.0" y="249" class="row-text">Logitech MX...</text>
+<text x="267.0" y="249" class="row-text">Keyboard</text>
+<text x="383.0" y="249" class="row-text">SN-10293-KEY</text>
+<text x="499.0" y="249" class="row-text">Aarav Sharma</text>
+<text x="615.0" y="249" class="row-text">2024-01-16 ...</text>
+<text x="731.0" y="249" class="row-text">active</text>
+<text x="847.0" y="249" class="row-text">aarav.sharm...</text>
+<text x="963.0" y="249" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="249" class="row-text">2026-01-16 ...</text>
+<rect x="20" y="260" width="1160" height="30" fill="#fff9e0"/>
+<line x1="20" y1="290" x2="1180" y2="290" class="grid-line"/>
+<text x="35.0" y="279" class="row-text">LPT002</text>
+<text x="151.0" y="279" class="row-text">MacBook Pro...</text>
+<text x="267.0" y="279" class="row-text">Laptop</text>
+<text x="383.0" y="279" class="row-text">SN-94021-LPT</text>
+<text x="499.0" y="279" class="row-text">Diya Patel</text>
+<text x="615.0" y="279" class="row-text">2024-01-19 ...</text>
+<text x="731.0" y="279" class="row-text">active</text>
+<text x="847.0" y="279" class="row-text">diya.patel@...</text>
+<text x="963.0" y="279" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="279" class="row-text">2026-01-19 ...</text>
+<rect x="20" y="290" width="1160" height="30" fill="#ffffff"/>
+<line x1="20" y1="320" x2="1180" y2="320" class="grid-line"/>
+<text x="35.0" y="309" class="row-text">PC002</text>
+<text x="151.0" y="309" class="row-text">LG DualUp 28"</text>
+<text x="267.0" y="309" class="row-text">Monitor</text>
+<text x="383.0" y="309" class="row-text">SN-93821-MON</text>
+<text x="499.0" y="309" class="row-text">Diya Patel</text>
+<text x="615.0" y="309" class="row-text">2024-01-19 ...</text>
+<text x="731.0" y="309" class="row-text">active</text>
+<text x="847.0" y="309" class="row-text">diya.patel@...</text>
+<text x="963.0" y="309" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="309" class="row-text">2026-01-19 ...</text>
+<rect x="20" y="320" width="1160" height="30" fill="#fff9e0"/>
+<line x1="20" y1="350" x2="1180" y2="350" class="grid-line"/>
+<text x="35.0" y="339" class="row-text">KB002</text>
+<text x="151.0" y="339" class="row-text">Keychron K2</text>
+<text x="267.0" y="339" class="row-text">Keyboard</text>
+<text x="383.0" y="339" class="row-text">SN-20394-KEY</text>
+<text x="499.0" y="339" class="row-text">Diya Patel</text>
+<text x="615.0" y="339" class="row-text">2024-01-19 ...</text>
+<text x="731.0" y="339" class="row-text">active</text>
+<text x="847.0" y="339" class="row-text">diya.patel@...</text>
+<text x="963.0" y="339" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="339" class="row-text">2026-01-19 ...</text>
+<rect x="20" y="350" width="1160" height="30" fill="#ffffff"/>
+<line x1="20" y1="380" x2="1180" y2="380" class="grid-line"/>
+<text x="35.0" y="369" class="row-text">LPT003</text>
+<text x="151.0" y="369" class="row-text">Dell Latitu...</text>
+<text x="267.0" y="369" class="row-text">Laptop</text>
+<text x="383.0" y="369" class="row-text">SN-10492-LPT</text>
+<text x="499.0" y="369" class="row-text">Vivaan Iyer</text>
+<text x="615.0" y="369" class="row-text">2024-02-03 ...</text>
+<text x="731.0" y="369" class="row-text">need repair</text>
+<text x="847.0" y="369" class="row-text">vivaan.iyer...</text>
+<text x="963.0" y="369" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="369" class="row-text">2024-08-03 ...</text>
+<rect x="20" y="380" width="1160" height="30" fill="#fff9e0"/>
+<line x1="20" y1="410" x2="1180" y2="410" class="grid-line"/>
+<text x="35.0" y="399" class="row-text">LPT004</text>
+<text x="151.0" y="399" class="row-text">HP EliteBoo...</text>
+<text x="267.0" y="399" class="row-text">Laptop</text>
+<text x="383.0" y="399" class="row-text">SN-58301-LPT</text>
+<text x="499.0" y="399" class="row-text">Ananya Chat...</text>
+<text x="615.0" y="399" class="row-text">2024-02-12 ...</text>
+<text x="731.0" y="399" class="row-text">active</text>
+<text x="847.0" y="399" class="row-text">ananya.c@co...</text>
+<text x="963.0" y="399" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="399" class="row-text">2026-02-12 ...</text>
+<rect x="20" y="410" width="1160" height="30" fill="#ffffff"/>
+<line x1="20" y1="440" x2="1180" y2="440" class="grid-line"/>
+<text x="35.0" y="429" class="row-text">PC003</text>
+<text x="151.0" y="429" class="row-text">BenQ PD2700Q</text>
+<text x="267.0" y="429" class="row-text">Monitor</text>
+<text x="383.0" y="429" class="row-text">SN-10493-MON</text>
+<text x="499.0" y="429" class="row-text">Ananya Chat...</text>
+<text x="615.0" y="429" class="row-text">2024-02-12 ...</text>
+<text x="731.0" y="429" class="row-text">active</text>
+<text x="847.0" y="429" class="row-text">ananya.c@co...</text>
+<text x="963.0" y="429" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="429" class="row-text">2026-02-12 ...</text>
+<rect x="20" y="440" width="1160" height="30" fill="#fff9e0"/>
+<line x1="20" y1="470" x2="1180" y2="470" class="grid-line"/>
+<text x="35.0" y="459" class="row-text">KB003</text>
+<text x="151.0" y="459" class="row-text">Dell KM3322...</text>
+<text x="267.0" y="459" class="row-text">Keyboard</text>
+<text x="383.0" y="459" class="row-text">SN-30495-KEY</text>
+<text x="499.0" y="459" class="row-text">Ananya Chat...</text>
+<text x="615.0" y="459" class="row-text">2024-02-12 ...</text>
+<text x="731.0" y="459" class="row-text">active</text>
+<text x="847.0" y="459" class="row-text">ananya.c@co...</text>
+<text x="963.0" y="459" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="459" class="row-text">2026-02-12 ...</text>
+<rect x="20" y="470" width="1160" height="30" fill="#ffffff"/>
+<line x1="20" y1="500" x2="1180" y2="500" class="grid-line"/>
+<text x="35.0" y="489" class="row-text">LPT005</text>
+<text x="151.0" y="489" class="row-text">ThinkPad T14</text>
+<text x="267.0" y="489" class="row-text">Laptop</text>
+<text x="383.0" y="489" class="row-text">SN-29481-LPT</text>
+<text x="499.0" y="489" class="row-text">Kabir Verma</text>
+<text x="615.0" y="489" class="row-text">2024-02-26 ...</text>
+<text x="731.0" y="489" class="row-text">dead</text>
+<text x="847.0" y="489" class="row-text">kabir.verma...</text>
+<text x="963.0" y="489" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="489" class="row-text">2024-03-01 ...</text>
+<rect x="20" y="500" width="1160" height="30" fill="#fff9e0"/>
+<line x1="20" y1="530" x2="1180" y2="530" class="grid-line"/>
+<text x="35.0" y="519" class="row-text">LPT006</text>
+<text x="151.0" y="519" class="row-text">MacBook Air M3</text>
+<text x="267.0" y="519" class="row-text">Laptop</text>
+<text x="383.0" y="519" class="row-text">SN-48291-LPT</text>
+<text x="499.0" y="519" class="row-text">Ishaan Reddy</text>
+<text x="615.0" y="519" class="row-text">2024-03-02 ...</text>
+<text x="731.0" y="519" class="row-text">active</text>
+<text x="847.0" y="519" class="row-text">ishaan.redd...</text>
+<text x="963.0" y="519" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="519" class="row-text">2026-03-02 ...</text>
+<rect x="20" y="530" width="1160" height="30" fill="#ffffff"/>
+<line x1="20" y1="560" x2="1180" y2="560" class="grid-line"/>
+<text x="35.0" y="549" class="row-text">PC005</text>
+<text x="151.0" y="549" class="row-text">Samsung Ody...</text>
+<text x="267.0" y="549" class="row-text">Monitor</text>
+<text x="383.0" y="549" class="row-text">SN-29482-MON</text>
+<text x="499.0" y="549" class="row-text">Ishaan Reddy</text>
+<text x="615.0" y="549" class="row-text">2024-03-02 ...</text>
+<text x="731.0" y="549" class="row-text">active</text>
+<text x="847.0" y="549" class="row-text">ishaan.redd...</text>
+<text x="963.0" y="549" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="549" class="row-text">2026-03-02 ...</text>
+<rect x="20" y="560" width="1160" height="30" fill="#fff9e0"/>
+<line x1="20" y1="590" x2="1180" y2="590" class="grid-line"/>
+<text x="35.0" y="579" class="row-text">KB005</text>
+<text x="151.0" y="579" class="row-text">Logitech K120</text>
+<text x="267.0" y="579" class="row-text">Keyboard</text>
+<text x="383.0" y="579" class="row-text">SN-50697-KEY</text>
+<text x="499.0" y="579" class="row-text">Ishaan Reddy</text>
+<text x="615.0" y="579" class="row-text">2024-03-02 ...</text>
+<text x="731.0" y="579" class="row-text">active</text>
+<text x="847.0" y="579" class="row-text">ishaan.redd...</text>
+<text x="963.0" y="579" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="579" class="row-text">2026-03-02 ...</text>
+<rect x="20" y="590" width="1160" height="30" fill="#ffffff"/>
+<line x1="20" y1="620" x2="1180" y2="620" class="grid-line"/>
+<text x="35.0" y="609" class="row-text">LPT007</text>
+<text x="151.0" y="609" class="row-text">Dell XPS 15</text>
+<text x="267.0" y="609" class="row-text">Laptop</text>
+<text x="383.0" y="609" class="row-text">SN-39482-LPT</text>
+<text x="499.0" y="609" class="row-text">Meera Nair</text>
+<text x="615.0" y="609" class="row-text">2024-03-06 ...</text>
+<text x="731.0" y="609" class="row-text">active</text>
+<text x="847.0" y="609" class="row-text">meera.nair@...</text>
+<text x="963.0" y="609" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="609" class="row-text">2026-03-06 ...</text>
+<rect x="20" y="620" width="1160" height="30" fill="#fff9e0"/>
+<line x1="20" y1="650" x2="1180" y2="650" class="grid-line"/>
+<text x="35.0" y="639" class="row-text">PC006</text>
+<text x="151.0" y="639" class="row-text">Dell P2422H</text>
+<text x="267.0" y="639" class="row-text">Monitor</text>
+<text x="383.0" y="639" class="row-text">SN-48292-MON</text>
+<text x="499.0" y="639" class="row-text">Meera Nair</text>
+<text x="615.0" y="639" class="row-text">2024-03-06 ...</text>
+<text x="731.0" y="639" class="row-text">active</text>
+<text x="847.0" y="639" class="row-text">meera.nair@...</text>
+<text x="963.0" y="639" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="639" class="row-text">2026-03-06 ...</text>
+<rect x="20" y="650" width="1160" height="30" fill="#ffffff"/>
+<line x1="20" y1="680" x2="1180" y2="680" class="grid-line"/>
+<text x="35.0" y="669" class="row-text">KB006</text>
+<text x="151.0" y="669" class="row-text">Razer Black...</text>
+<text x="267.0" y="669" class="row-text">Keyboard</text>
+<text x="383.0" y="669" class="row-text">SN-60798-KEY</text>
+<text x="499.0" y="669" class="row-text">Meera Nair</text>
+<text x="615.0" y="669" class="row-text">2024-03-06 ...</text>
+<text x="731.0" y="669" class="row-text">active</text>
+<text x="847.0" y="669" class="row-text">meera.nair@...</text>
+<text x="963.0" y="669" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="669" class="row-text">2026-03-06 ...</text>
+<rect x="20" y="680" width="1160" height="30" fill="#fff9e0"/>
+<line x1="20" y1="710" x2="1180" y2="710" class="grid-line"/>
+<text x="35.0" y="699" class="row-text">LPT008</text>
+<text x="151.0" y="699" class="row-text">HP ProBook 450</text>
+<text x="267.0" y="699" class="row-text">Laptop</text>
+<text x="383.0" y="699" class="row-text">SN-84920-LPT</text>
+<text x="499.0" y="699" class="row-text">Arjun Gupta</text>
+<text x="615.0" y="699" class="row-text">2024-03-14 ...</text>
+<text x="731.0" y="699" class="row-text">inactive</text>
+<text x="847.0" y="699" class="row-text">arjun.gupta...</text>
+<text x="963.0" y="699" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="699" class="row-text">2024-09-14 ...</text>
+<rect x="20" y="710" width="1160" height="30" fill="#ffffff"/>
+<line x1="20" y1="740" x2="1180" y2="740" class="grid-line"/>
+<text x="35.0" y="729" class="row-text">LPT009</text>
+<text x="151.0" y="729" class="row-text">ThinkPad E16</text>
+<text x="267.0" y="729" class="row-text">Laptop</text>
+<text x="383.0" y="729" class="row-text">SN-10482-LPT</text>
+<text x="499.0" y="729" class="row-text">Sai Joshi</text>
+<text x="615.0" y="729" class="row-text">2024-03-24 ...</text>
+<text x="731.0" y="729" class="row-text">active</text>
+<text x="847.0" y="729" class="row-text">sai.joshi@c...</text>
+<text x="963.0" y="729" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="729" class="row-text">2026-03-24 ...</text>
+<rect x="20" y="740" width="1160" height="30" fill="#fff9e0"/>
+<line x1="20" y1="770" x2="1180" y2="770" class="grid-line"/>
+<text x="35.0" y="759" class="row-text">PC008</text>
+<text x="151.0" y="759" class="row-text">Asus ProArt...</text>
+<text x="267.0" y="759" class="row-text">Monitor</text>
+<text x="383.0" y="759" class="row-text">SN-84921-MON</text>
+<text x="499.0" y="759" class="row-text">Sai Joshi</text>
+<text x="615.0" y="759" class="row-text">2024-03-24 ...</text>
+<text x="731.0" y="759" class="row-text">active</text>
+<text x="847.0" y="759" class="row-text">sai.joshi@c...</text>
+<text x="963.0" y="759" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="759" class="row-text">2026-03-24 ...</text>
+<rect x="20" y="770" width="1160" height="30" fill="#ffffff"/>
+<line x1="20" y1="800" x2="1180" y2="800" class="grid-line"/>
+<text x="35.0" y="789" class="row-text">KB008</text>
+<text x="151.0" y="789" class="row-text">Microsoft E...</text>
+<text x="267.0" y="789" class="row-text">Keyboard</text>
+<text x="383.0" y="789" class="row-text">SN-80900-KEY</text>
+<text x="499.0" y="789" class="row-text">Sai Joshi</text>
+<text x="615.0" y="789" class="row-text">2024-03-24 ...</text>
+<text x="731.0" y="789" class="row-text">active</text>
+<text x="847.0" y="789" class="row-text">sai.joshi@c...</text>
+<text x="963.0" y="789" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="789" class="row-text">2026-03-24 ...</text>
+<rect x="20" y="800" width="1160" height="30" fill="#fff9e0"/>
+<line x1="20" y1="830" x2="1180" y2="830" class="grid-line"/>
+<text x="35.0" y="819" class="row-text">LPT010</text>
+<text x="151.0" y="819" class="row-text">MacBook Pro...</text>
+<text x="267.0" y="819" class="row-text">Laptop</text>
+<text x="383.0" y="819" class="row-text">SN-74839-LPT</text>
+<text x="499.0" y="819" class="row-text">Reyansh Singh</text>
+<text x="615.0" y="819" class="row-text">2024-04-02 ...</text>
+<text x="731.0" y="819" class="row-text">active</text>
+<text x="847.0" y="819" class="row-text">reyansh.sin...</text>
+<text x="963.0" y="819" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="819" class="row-text">2026-04-02 ...</text>
+<rect x="20" y="830" width="1160" height="30" fill="#ffffff"/>
+<line x1="20" y1="860" x2="1180" y2="860" class="grid-line"/>
+<text x="35.0" y="849" class="row-text">PC010</text>
+<text x="151.0" y="849" class="row-text">Dell UltraS...</text>
+<text x="267.0" y="849" class="row-text">Monitor</text>
+<text x="383.0" y="849" class="row-text">SN-74840-MON</text>
+<text x="499.0" y="849" class="row-text">Reyansh Singh</text>
+<text x="615.0" y="849" class="row-text">2024-04-02 ...</text>
+<text x="731.0" y="849" class="row-text">active</text>
+<text x="847.0" y="849" class="row-text">reyansh.sin...</text>
+<text x="963.0" y="849" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="849" class="row-text">2026-04-02 ...</text>
+<rect x="20" y="860" width="1160" height="30" fill="#fff9e0"/>
+<line x1="20" y1="890" x2="1180" y2="890" class="grid-line"/>
+<text x="35.0" y="879" class="row-text">KB009</text>
+<text x="151.0" y="879" class="row-text">Apple Magic...</text>
+<text x="267.0" y="879" class="row-text">Keyboard</text>
+<text x="383.0" y="879" class="row-text">SN-90011-KEY</text>
+<text x="499.0" y="879" class="row-text">Reyansh Singh</text>
+<text x="615.0" y="879" class="row-text">2024-04-02 ...</text>
+<text x="731.0" y="879" class="row-text">active</text>
+<text x="847.0" y="879" class="row-text">reyansh.sin...</text>
+<text x="963.0" y="879" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="879" class="row-text">2026-04-02 ...</text>
+<rect x="20" y="890" width="1160" height="30" fill="#ffffff"/>
+<line x1="20" y1="920" x2="1180" y2="920" class="grid-line"/>
+<text x="35.0" y="909" class="row-text">LPT011</text>
+<text x="151.0" y="909" class="row-text">Dell Vostro...</text>
+<text x="267.0" y="909" class="row-text">Laptop</text>
+<text x="383.0" y="909" class="row-text">SN-93024-LPT</text>
+<text x="499.0" y="909" class="row-text">Aadhya Rao</text>
+<text x="615.0" y="909" class="row-text">2024-04-12 ...</text>
+<text x="731.0" y="909" class="row-text">need repair</text>
+<text x="847.0" y="909" class="row-text">aadhya.rao@...</text>
+<text x="963.0" y="909" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="909" class="row-text">2024-07-12 ...</text>
+<rect x="20" y="920" width="1160" height="30" fill="#fff9e0"/>
+<line x1="20" y1="950" x2="1180" y2="950" class="grid-line"/>
+<text x="35.0" y="939" class="row-text">LPT012</text>
+<text x="151.0" y="939" class="row-text">HP ZBook Power</text>
+<text x="267.0" y="939" class="row-text">Laptop</text>
+<text x="383.0" y="939" class="row-text">SN-57392-LPT</text>
+<text x="499.0" y="939" class="row-text">Krishna Kumar</text>
+<text x="615.0" y="939" class="row-text">2024-04-16 ...</text>
+<text x="731.0" y="939" class="row-text">active</text>
+<text x="847.0" y="939" class="row-text">krishna.kum...</text>
+<text x="963.0" y="939" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="939" class="row-text">2026-04-16 ...</text>
+<rect x="20" y="950" width="1160" height="30" fill="#ffffff"/>
+<line x1="20" y1="980" x2="1180" y2="980" class="grid-line"/>
+<text x="35.0" y="969" class="row-text">PC011</text>
+<text x="151.0" y="969" class="row-text">LG 27QN600</text>
+<text x="267.0" y="969" class="row-text">Monitor</text>
+<text x="383.0" y="969" class="row-text">SN-93025-MON</text>
+<text x="499.0" y="969" class="row-text">Krishna Kumar</text>
+<text x="615.0" y="969" class="row-text">2024-04-16 ...</text>
+<text x="731.0" y="969" class="row-text">active</text>
+<text x="847.0" y="969" class="row-text">krishna.kum...</text>
+<text x="963.0" y="969" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="969" class="row-text">2026-04-16 ...</text>
+<rect x="20" y="980" width="1160" height="30" fill="#fff9e0"/>
+<line x1="20" y1="1010" x2="1180" y2="1010" class="grid-line"/>
+<text x="35.0" y="999" class="row-text">LPT013</text>
+<text x="151.0" y="999" class="row-text">Asus Expert...</text>
+<text x="267.0" y="999" class="row-text">Laptop</text>
+<text x="383.0" y="999" class="row-text">SN-28401-LPT</text>
+<text x="499.0" y="999" class="row-text">Prisha Mishra</text>
+<text x="615.0" y="999" class="row-text">2024-04-22 ...</text>
+<text x="731.0" y="999" class="row-text">inactive</text>
+<text x="847.0" y="999" class="row-text">prisha.mish...</text>
+<text x="963.0" y="999" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="999" class="row-text">2024-10-22 ...</text>
+<rect x="20" y="1010" width="1160" height="30" fill="#ffffff"/>
+<line x1="20" y1="1040" x2="1180" y2="1040" class="grid-line"/>
+<text x="35.0" y="1029" class="row-text">LPT014</text>
+<text x="151.0" y="1029" class="row-text">ThinkPad L14</text>
+<text x="267.0" y="1029" class="row-text">Laptop</text>
+<text x="383.0" y="1029" class="row-text">SN-47291-LPT</text>
+<text x="499.0" y="1029" class="row-text">Rohan Mehta</text>
+<text x="615.0" y="1029" class="row-text">2024-05-03 ...</text>
+<text x="731.0" y="1029" class="row-text">active</text>
+<text x="847.0" y="1029" class="row-text">rohan.mehta...</text>
+<text x="963.0" y="1029" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="1029" class="row-text">2026-05-03 ...</text>
+<rect x="20" y="1040" width="1160" height="30" fill="#fff9e0"/>
+<line x1="20" y1="1070" x2="1180" y2="1070" class="grid-line"/>
+<text x="35.0" y="1059" class="row-text">PC013</text>
+<text x="151.0" y="1059" class="row-text">Samsung Ess...</text>
+<text x="267.0" y="1059" class="row-text">Monitor</text>
+<text x="383.0" y="1059" class="row-text">SN-28402-MON</text>
+<text x="499.0" y="1059" class="row-text">Rohan Mehta</text>
+<text x="615.0" y="1059" class="row-text">2024-05-03 ...</text>
+<text x="731.0" y="1059" class="row-text">active</text>
+<text x="847.0" y="1059" class="row-text">rohan.mehta...</text>
+<text x="963.0" y="1059" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="1059" class="row-text">2026-05-03 ...</text>
+<rect x="20" y="1070" width="1160" height="30" fill="#ffffff"/>
+<line x1="20" y1="1100" x2="1180" y2="1100" class="grid-line"/>
+<text x="35.0" y="1089" class="row-text">LPT015</text>
+<text x="151.0" y="1089" class="row-text">MacBook Pro...</text>
+<text x="267.0" y="1089" class="row-text">Laptop</text>
+<text x="383.0" y="1089" class="row-text">SN-84931-LPT</text>
+<text x="499.0" y="1089" class="row-text">Zara Khan</text>
+<text x="615.0" y="1089" class="row-text">2024-05-14 ...</text>
+<text x="731.0" y="1089" class="row-text">active</text>
+<text x="847.0" y="1089" class="row-text">zara.khan@c...</text>
+<text x="963.0" y="1089" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="1089" class="row-text">2026-05-14 ...</text>
+<rect x="20" y="1100" width="1160" height="30" fill="#fff9e0"/>
+<line x1="20" y1="1130" x2="1180" y2="1130" class="grid-line"/>
+<text x="35.0" y="1119" class="row-text">PC015</text>
+<text x="151.0" y="1119" class="row-text">HP ProTower...</text>
+<text x="267.0" y="1119" class="row-text">Desktop PC</text>
+<text x="383.0" y="1119" class="row-text">SN-84932-CPC</text>
+<text x="499.0" y="1119" class="row-text">Zara Khan</text>
+<text x="615.0" y="1119" class="row-text">2024-05-14 ...</text>
+<text x="731.0" y="1119" class="row-text">active</text>
+<text x="847.0" y="1119" class="row-text">zara.khan@c...</text>
+<text x="963.0" y="1119" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="1119" class="row-text">2026-05-14 ...</text>
+<rect x="20" y="1130" width="1160" height="30" fill="#ffffff"/>
+<line x1="20" y1="1160" x2="1180" y2="1160" class="grid-line"/>
+<text x="35.0" y="1149" class="row-text">LPT016</text>
+<text x="151.0" y="1149" class="row-text">Dell Latitu...</text>
+<text x="267.0" y="1149" class="row-text">Laptop</text>
+<text x="383.0" y="1149" class="row-text">SN-39402-LPT</text>
+<text x="499.0" y="1149" class="row-text">Devendra Yadav</text>
+<text x="615.0" y="1149" class="row-text">2024-05-19 ...</text>
+<text x="731.0" y="1149" class="row-text">active</text>
+<text x="847.0" y="1149" class="row-text">devendra.y@...</text>
+<text x="963.0" y="1149" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="1149" class="row-text">2026-05-19 ...</text>
+<rect x="20" y="1160" width="1160" height="30" fill="#fff9e0"/>
+<line x1="20" y1="1190" x2="1180" y2="1190" class="grid-line"/>
+<text x="35.0" y="1179" class="row-text">PC016</text>
+<text x="151.0" y="1179" class="row-text">Lenovo Thin...</text>
+<text x="267.0" y="1179" class="row-text">Desktop PC</text>
+<text x="383.0" y="1179" class="row-text">SN-39403-CPC</text>
+<text x="499.0" y="1179" class="row-text">Devendra Yadav</text>
+<text x="615.0" y="1179" class="row-text">2024-05-19 ...</text>
+<text x="731.0" y="1179" class="row-text">active</text>
+<text x="847.0" y="1179" class="row-text">devendra.y@...</text>
+<text x="963.0" y="1179" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="1179" class="row-text">2026-05-19 ...</text>
+<rect x="20" y="1190" width="1160" height="30" fill="#ffffff"/>
+<line x1="20" y1="1220" x2="1180" y2="1220" class="grid-line"/>
+<text x="35.0" y="1209" class="row-text">LPT017</text>
+<text x="151.0" y="1209" class="row-text">HP EliteBoo...</text>
+<text x="267.0" y="1209" class="row-text">Laptop</text>
+<text x="383.0" y="1209" class="row-text">SN-10483-LPT</text>
+<text x="499.0" y="1209" class="row-text">Myra Saxena</text>
+<text x="615.0" y="1209" class="row-text">2024-05-26 ...</text>
+<text x="731.0" y="1209" class="row-text">active</text>
+<text x="847.0" y="1209" class="row-text">myra.saxena...</text>
+<text x="963.0" y="1209" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="1209" class="row-text">2026-05-26 ...</text>
+<rect x="20" y="1220" width="1160" height="30" fill="#fff9e0"/>
+<line x1="20" y1="1250" x2="1180" y2="1250" class="grid-line"/>
+<text x="35.0" y="1239" class="row-text">PC017</text>
+<text x="151.0" y="1239" class="row-text">Dell Precis...</text>
+<text x="267.0" y="1239" class="row-text">Desktop PC</text>
+<text x="383.0" y="1239" class="row-text">SN-10484-CPC</text>
+<text x="499.0" y="1239" class="row-text">Myra Saxena</text>
+<text x="615.0" y="1239" class="row-text">2024-05-26 ...</text>
+<text x="731.0" y="1239" class="row-text">active</text>
+<text x="847.0" y="1239" class="row-text">myra.saxena...</text>
+<text x="963.0" y="1239" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="1239" class="row-text">2026-05-26 ...</text>
+<rect x="20" y="1250" width="1160" height="30" fill="#ffffff"/>
+<line x1="20" y1="1280" x2="1180" y2="1280" class="grid-line"/>
+<text x="35.0" y="1269" class="row-text">LPT018</text>
+<text x="151.0" y="1269" class="row-text">ThinkPad X1...</text>
+<text x="267.0" y="1269" class="row-text">Laptop</text>
+<text x="383.0" y="1269" class="row-text">SN-93841-LPT</text>
+<text x="499.0" y="1269" class="row-text">Advait Kulk...</text>
+<text x="615.0" y="1269" class="row-text">2024-06-02 ...</text>
+<text x="731.0" y="1269" class="row-text">need repair</text>
+<text x="847.0" y="1269" class="row-text">advait.k@co...</text>
+<text x="963.0" y="1269" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="1269" class="row-text">2024-09-02 ...</text>
+<rect x="20" y="1280" width="1160" height="30" fill="#fff9e0"/>
+<line x1="20" y1="1310" x2="1180" y2="1310" class="grid-line"/>
+<text x="35.0" y="1299" class="row-text">LPT019</text>
+<text x="151.0" y="1299" class="row-text">Dell Precis...</text>
+<text x="267.0" y="1299" class="row-text">Laptop</text>
+<text x="383.0" y="1299" class="row-text">SN-57294-LPT</text>
+<text x="499.0" y="1299" class="row-text">Mishka Pillai</text>
+<text x="615.0" y="1299" class="row-text">2024-06-11 ...</text>
+<text x="731.0" y="1299" class="row-text">active</text>
+<text x="847.0" y="1299" class="row-text">mishka.p@co...</text>
+<text x="963.0" y="1299" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="1299" class="row-text">2026-06-11 ...</text>
+<rect x="20" y="1310" width="1160" height="30" fill="#ffffff"/>
+<line x1="20" y1="1340" x2="1180" y2="1340" class="grid-line"/>
+<text x="35.0" y="1329" class="row-text">PC019</text>
+<text x="151.0" y="1329" class="row-text">Lenovo Thin...</text>
+<text x="267.0" y="1329" class="row-text">Desktop PC</text>
+<text x="383.0" y="1329" class="row-text">SN-57295-CPC</text>
+<text x="499.0" y="1329" class="row-text">Mishka Pillai</text>
+<text x="615.0" y="1329" class="row-text">2024-06-11 ...</text>
+<text x="731.0" y="1329" class="row-text">active</text>
+<text x="847.0" y="1329" class="row-text">mishka.p@co...</text>
+<text x="963.0" y="1329" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="1329" class="row-text">2026-06-11 ...</text>
+<rect x="20" y="1340" width="1160" height="30" fill="#fff9e0"/>
+<line x1="20" y1="1370" x2="1180" y2="1370" class="grid-line"/>
+<text x="35.0" y="1359" class="row-text">LPT020</text>
+<text x="151.0" y="1359" class="row-text">MacBook Air M2</text>
+<text x="267.0" y="1359" class="row-text">Laptop</text>
+<text x="383.0" y="1359" class="row-text">SN-28492-LPT</text>
+<text x="499.0" y="1359" class="row-text">Shaurya Cho...</text>
+<text x="615.0" y="1359" class="row-text">2024-06-16 ...</text>
+<text x="731.0" y="1359" class="row-text">dead</text>
+<text x="847.0" y="1359" class="row-text">shaurya.c@c...</text>
+<text x="963.0" y="1359" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="1359" class="row-text">2024-06-20 ...</text>
+<rect x="20" y="1370" width="1160" height="30" fill="#ffffff"/>
+<line x1="20" y1="1400" x2="1180" y2="1400" class="grid-line"/>
+<text x="35.0" y="1389" class="row-text">LPT021</text>
+<text x="151.0" y="1389" class="row-text">HP ProBook 440</text>
+<text x="267.0" y="1389" class="row-text">Laptop</text>
+<text x="383.0" y="1389" class="row-text">SN-48391-LPT</text>
+<text x="499.0" y="1389" class="row-text">Pari Deshmukh</text>
+<text x="615.0" y="1389" class="row-text">2024-06-23 ...</text>
+<text x="731.0" y="1389" class="row-text">active</text>
+<text x="847.0" y="1389" class="row-text">pari.d@comp...</text>
+<text x="963.0" y="1389" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="1389" class="row-text">2026-06-23 ...</text>
+<rect x="20" y="1400" width="1160" height="30" fill="#fff9e0"/>
+<line x1="20" y1="1430" x2="1180" y2="1430" class="grid-line"/>
+<text x="35.0" y="1419" class="row-text">PC020</text>
+<text x="151.0" y="1419" class="row-text">Dell OptiPl...</text>
+<text x="267.0" y="1419" class="row-text">Desktop PC</text>
+<text x="383.0" y="1419" class="row-text">SN-28493-CPC</text>
+<text x="499.0" y="1419" class="row-text">Pari Deshmukh</text>
+<text x="615.0" y="1419" class="row-text">2024-06-23 ...</text>
+<text x="731.0" y="1419" class="row-text">active</text>
+<text x="847.0" y="1419" class="row-text">pari.d@comp...</text>
+<text x="963.0" y="1419" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="1419" class="row-text">2026-06-23 ...</text>
+<rect x="20" y="1430" width="1160" height="30" fill="#ffffff"/>
+<line x1="20" y1="1460" x2="1180" y2="1460" class="grid-line"/>
+<text x="35.0" y="1449" class="row-text">LPT022</text>
+<text x="151.0" y="1449" class="row-text">ThinkPad P16</text>
+<text x="267.0" y="1449" class="row-text">Laptop</text>
+<text x="383.0" y="1449" class="row-text">SN-93820-LPT</text>
+<text x="499.0" y="1449" class="row-text">Rudra Banerjee</text>
+<text x="615.0" y="1449" class="row-text">2024-07-02 ...</text>
+<text x="731.0" y="1449" class="row-text">active</text>
+<text x="847.0" y="1449" class="row-text">rudra.b@com...</text>
+<text x="963.0" y="1449" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="1449" class="row-text">2026-07-02 ...</text>
+<rect x="20" y="1460" width="1160" height="30" fill="#fff9e0"/>
+<line x1="20" y1="1490" x2="1180" y2="1490" class="grid-line"/>
+<text x="35.0" y="1479" class="row-text">PC022</text>
+<text x="151.0" y="1479" class="row-text">iMac 24" M3</text>
+<text x="267.0" y="1479" class="row-text">Desktop PC</text>
+<text x="383.0" y="1479" class="row-text">SN-93821-CPC</text>
+<text x="499.0" y="1479" class="row-text">Rudra Banerjee</text>
+<text x="615.0" y="1479" class="row-text">2024-07-02 ...</text>
+<text x="731.0" y="1479" class="row-text">active</text>
+<text x="847.0" y="1479" class="row-text">rudra.b@com...</text>
+<text x="963.0" y="1479" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="1479" class="row-text">2026-07-02 ...</text>
+<rect x="20" y="1490" width="1160" height="30" fill="#ffffff"/>
+<line x1="20" y1="1520" x2="1180" y2="1520" class="grid-line"/>
+<text x="35.0" y="1509" class="row-text">LPT023</text>
+<text x="151.0" y="1509" class="row-text">Dell Latitu...</text>
+<text x="267.0" y="1509" class="row-text">Laptop</text>
+<text x="383.0" y="1509" class="row-text">SN-10493-LPT</text>
+<text x="499.0" y="1509" class="row-text">Riya Kapoor</text>
+<text x="615.0" y="1509" class="row-text">2024-07-09 ...</text>
+<text x="731.0" y="1509" class="row-text">inactive</text>
+<text x="847.0" y="1509" class="row-text">riya.kapoor...</text>
+<text x="963.0" y="1509" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="1509" class="row-text">2025-01-09 ...</text>
+<rect x="20" y="1520" width="1160" height="30" fill="#fff9e0"/>
+<line x1="20" y1="1550" x2="1180" y2="1550" class="grid-line"/>
+<text x="35.0" y="1539" class="row-text">LPT024</text>
+<text x="151.0" y="1539" class="row-text">MacBook Pro...</text>
+<text x="267.0" y="1539" class="row-text">Laptop</text>
+<text x="383.0" y="1539" class="row-text">SN-57391-LPT</text>
+<text x="499.0" y="1539" class="row-text">Ayaan Bhat</text>
+<text x="615.0" y="1539" class="row-text">2024-07-16 ...</text>
+<text x="731.0" y="1539" class="row-text">active</text>
+<text x="847.0" y="1539" class="row-text">ayaan.bhat@...</text>
+<text x="963.0" y="1539" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="1539" class="row-text">2026-07-16 ...</text>
+<rect x="20" y="1550" width="1160" height="30" fill="#ffffff"/>
+<line x1="20" y1="1580" x2="1180" y2="1580" class="grid-line"/>
+<text x="35.0" y="1569" class="row-text">PC023</text>
+<text x="151.0" y="1569" class="row-text">Dell Precis...</text>
+<text x="267.0" y="1569" class="row-text">Desktop PC</text>
+<text x="383.0" y="1569" class="row-text">SN-10494-CPC</text>
+<text x="499.0" y="1569" class="row-text">Ayaan Bhat</text>
+<text x="615.0" y="1569" class="row-text">2024-07-16 ...</text>
+<text x="731.0" y="1569" class="row-text">active</text>
+<text x="847.0" y="1569" class="row-text">ayaan.bhat@...</text>
+<text x="963.0" y="1569" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="1569" class="row-text">2026-07-16 ...</text>
+<rect x="20" y="1580" width="1160" height="30" fill="#fff9e0"/>
+<line x1="20" y1="1610" x2="1180" y2="1610" class="grid-line"/>
+<text x="35.0" y="1599" class="row-text">LPT025</text>
+<text x="151.0" y="1599" class="row-text">HP ZBook St...</text>
+<text x="267.0" y="1599" class="row-text">Laptop</text>
+<text x="383.0" y="1599" class="row-text">SN-28402-LPT</text>
+<text x="499.0" y="1599" class="row-text">Aarohi Das</text>
+<text x="615.0" y="1599" class="row-text">2024-07-23 ...</text>
+<text x="731.0" y="1599" class="row-text">active</text>
+<text x="847.0" y="1599" class="row-text">aarohi.das@...</text>
+<text x="963.0" y="1599" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="1599" class="row-text">2026-07-23 ...</text>
+<rect x="20" y="1610" width="1160" height="30" fill="#ffffff"/>
+<line x1="20" y1="1640" x2="1180" y2="1640" class="grid-line"/>
+<text x="35.0" y="1629" class="row-text">PC025</text>
+<text x="151.0" y="1629" class="row-text">Lenovo Idea...</text>
+<text x="267.0" y="1629" class="row-text">Desktop PC</text>
+<text x="383.0" y="1629" class="row-text">SN-28403-CPC</text>
+<text x="499.0" y="1629" class="row-text">Aarohi Das</text>
+<text x="615.0" y="1629" class="row-text">2024-07-23 ...</text>
+<text x="731.0" y="1629" class="row-text">active</text>
+<text x="847.0" y="1629" class="row-text">aarohi.das@...</text>
+<text x="963.0" y="1629" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="1629" class="row-text">2026-07-23 ...</text>
+<rect x="20" y="1640" width="1160" height="30" fill="#fff9e0"/>
+<line x1="20" y1="1670" x2="1180" y2="1670" class="grid-line"/>
+<text x="35.0" y="1659" class="row-text">PC004</text>
+<text x="151.0" y="1659" class="row-text">HP E24 G4</text>
+<text x="267.0" y="1659" class="row-text">Monitor</text>
+<text x="383.0" y="1659" class="row-text">SN-58302-MON</text>
+<text x="499.0" y="1659" class="row-text">Vedant Joshi</text>
+<text x="615.0" y="1659" class="row-text">2024-02-11 ...</text>
+<text x="731.0" y="1659" class="row-text">need repair</text>
+<text x="847.0" y="1659" class="row-text">vedant.j@co...</text>
+<text x="963.0" y="1659" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="1659" class="row-text">2024-05-11 ...</text>
+<rect x="20" y="1670" width="1160" height="30" fill="#ffffff"/>
+<line x1="20" y1="1700" x2="1180" y2="1700" class="grid-line"/>
+<text x="35.0" y="1689" class="row-text">PC007</text>
+<text x="151.0" y="1689" class="row-text">LG UltraFin...</text>
+<text x="267.0" y="1689" class="row-text">Monitor</text>
+<text x="383.0" y="1689" class="row-text">SN-39483-MON</text>
+<text x="499.0" y="1689" class="row-text">Anika Sen</text>
+<text x="615.0" y="1689" class="row-text">2024-03-06 ...</text>
+<text x="731.0" y="1689" class="row-text">inactive</text>
+<text x="847.0" y="1689" class="row-text">anika.sen@c...</text>
+<text x="963.0" y="1689" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="1689" class="row-text">2024-09-06 ...</text>
+<rect x="20" y="1700" width="1160" height="30" fill="#fff9e0"/>
+<line x1="20" y1="1730" x2="1180" y2="1730" class="grid-line"/>
+<text x="35.0" y="1719" class="row-text">PC012</text>
+<text x="151.0" y="1719" class="row-text">BenQ GW2480</text>
+<text x="267.0" y="1719" class="row-text">Monitor</text>
+<text x="383.0" y="1719" class="row-text">SN-57393-MON</text>
+<text x="499.0" y="1719" class="row-text">Dhruv Sharma</text>
+<text x="615.0" y="1719" class="row-text">2024-04-16 ...</text>
+<text x="731.0" y="1719" class="row-text">inactive</text>
+<text x="847.0" y="1719" class="row-text">dhruv.s@com...</text>
+<text x="963.0" y="1719" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="1719" class="row-text">2024-10-16 ...</text>
+<rect x="20" y="1730" width="1160" height="30" fill="#ffffff"/>
+<line x1="20" y1="1760" x2="1180" y2="1760" class="grid-line"/>
+<text x="35.0" y="1749" class="row-text">PC014</text>
+<text x="151.0" y="1749" class="row-text">Dell OptiPl...</text>
+<text x="267.0" y="1749" class="row-text">Desktop PC</text>
+<text x="383.0" y="1749" class="row-text">SN-47292-CPC</text>
+<text x="499.0" y="1749" class="row-text">Siya Wadhwa</text>
+<text x="615.0" y="1749" class="row-text">2024-05-03 ...</text>
+<text x="731.0" y="1749" class="row-text">active</text>
+<text x="847.0" y="1749" class="row-text">siya.wadhwa...</text>
+<text x="963.0" y="1749" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="1749" class="row-text">2026-05-03 ...</text>
+<rect x="20" y="1760" width="1160" height="30" fill="#fff9e0"/>
+<line x1="20" y1="1790" x2="1180" y2="1790" class="grid-line"/>
+<text x="35.0" y="1779" class="row-text">PC018</text>
+<text x="151.0" y="1779" class="row-text">HP Z2 Mini G9</text>
+<text x="267.0" y="1779" class="row-text">Desktop PC</text>
+<text x="383.0" y="1779" class="row-text">SN-93842-CPC</text>
+<text x="499.0" y="1779" class="row-text">Ritvik Malh...</text>
+<text x="615.0" y="1779" class="row-text">2024-06-02 ...</text>
+<text x="731.0" y="1779" class="row-text">need repair</text>
+<text x="847.0" y="1779" class="row-text">ritvik.m@co...</text>
+<text x="963.0" y="1779" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="1779" class="row-text">2024-09-02 ...</text>
+<rect x="20" y="1790" width="1160" height="30" fill="#ffffff"/>
+<line x1="20" y1="1820" x2="1180" y2="1820" class="grid-line"/>
+<text x="35.0" y="1809" class="row-text">PC021</text>
+<text x="151.0" y="1809" class="row-text">HP Elite Mi...</text>
+<text x="267.0" y="1809" class="row-text">Desktop PC</text>
+<text x="383.0" y="1809" class="row-text">SN-48392-CPC</text>
+<text x="499.0" y="1809" class="row-text">Kiara Goel</text>
+<text x="615.0" y="1809" class="row-text">2024-06-23 ...</text>
+<text x="731.0" y="1809" class="row-text">inactive</text>
+<text x="847.0" y="1809" class="row-text">kiara.goel@...</text>
+<text x="963.0" y="1809" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="1809" class="row-text">2024-12-23 ...</text>
+<rect x="20" y="1820" width="1160" height="30" fill="#fff9e0"/>
+<line x1="20" y1="1850" x2="1180" y2="1850" class="grid-line"/>
+<text x="35.0" y="1839" class="row-text">PC024</text>
+<text x="151.0" y="1839" class="row-text">HP Pro Mini...</text>
+<text x="267.0" y="1839" class="row-text">Desktop PC</text>
+<text x="383.0" y="1839" class="row-text">SN-57392-CPC</text>
+<text x="499.0" y="1839" class="row-text">Darsh Patel</text>
+<text x="615.0" y="1839" class="row-text">2024-07-16 ...</text>
+<text x="731.0" y="1839" class="row-text">dead</text>
+<text x="847.0" y="1839" class="row-text">darsh.patel...</text>
+<text x="963.0" y="1839" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="1839" class="row-text">2024-07-20 ...</text>
+<rect x="20" y="1850" width="1160" height="30" fill="#ffffff"/>
+<line x1="20" y1="1880" x2="1180" y2="1880" class="grid-line"/>
+<text x="35.0" y="1869" class="row-text">KB004</text>
+<text x="151.0" y="1869" class="row-text">HP Pavilion...</text>
+<text x="267.0" y="1869" class="row-text">Keyboard</text>
+<text x="383.0" y="1869" class="row-text">SN-40596-KEY</text>
+<text x="499.0" y="1869" class="row-text">Ira Mukhopa...</text>
+<text x="615.0" y="1869" class="row-text">2024-02-11 ...</text>
+<text x="731.0" y="1869" class="row-text">need repair</text>
+<text x="847.0" y="1869" class="row-text">ira.m@compa...</text>
+<text x="963.0" y="1869" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="1869" class="row-text">2024-05-11 ...</text>
+<rect x="20" y="1880" width="1160" height="30" fill="#fff9e0"/>
+<line x1="20" y1="1910" x2="1180" y2="1910" class="grid-line"/>
+<text x="35.0" y="1899" class="row-text">KB007</text>
+<text x="151.0" y="1899" class="row-text">Corsair K70</text>
+<text x="267.0" y="1899" class="row-text">Keyboard</text>
+<text x="383.0" y="1899" class="row-text">SN-70899-KEY</text>
+<text x="499.0" y="1899" class="row-text">Shlok Tiwari</text>
+<text x="615.0" y="1899" class="row-text">2024-03-06 ...</text>
+<text x="731.0" y="1899" class="row-text">inactive</text>
+<text x="847.0" y="1899" class="row-text">shlok.t@com...</text>
+<text x="963.0" y="1899" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="1899" class="row-text">2024-09-06 ...</text>
+<rect x="20" y="1910" width="1160" height="30" fill="#ffffff"/>
+<line x1="20" y1="1940" x2="1180" y2="1940" class="grid-line"/>
+<text x="35.0" y="1929" class="row-text">HDD001</text>
+<text x="151.0" y="1929" class="row-text">WD My Passp...</text>
+<text x="267.0" y="1929" class="row-text">External Drive</text>
+<text x="383.0" y="1929" class="row-text">SN-22111-HDD</text>
+<text x="499.0" y="1929" class="row-text">Tanvi Hegde</text>
+<text x="615.0" y="1929" class="row-text">2024-01-16 ...</text>
+<text x="731.0" y="1929" class="row-text">active</text>
+<text x="847.0" y="1929" class="row-text">tanvi.h@com...</text>
+<text x="963.0" y="1929" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="1929" class="row-text">2025-01-16 ...</text>
+<rect x="20" y="1940" width="1160" height="30" fill="#fff9e0"/>
+<line x1="20" y1="1970" x2="1180" y2="1970" class="grid-line"/>
+<text x="35.0" y="1959" class="row-text">CAM001</text>
+<text x="151.0" y="1959" class="row-text">Logitech Br...</text>
+<text x="267.0" y="1959" class="row-text">Webcam</text>
+<text x="383.0" y="1959" class="row-text">SN-11001-CAM</text>
+<text x="499.0" y="1959" class="row-text">Tanvi Hegde</text>
+<text x="615.0" y="1959" class="row-text">2024-01-16 ...</text>
+<text x="731.0" y="1959" class="row-text">active</text>
+<text x="847.0" y="1959" class="row-text">tanvi.h@com...</text>
+<text x="963.0" y="1959" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="1959" class="row-text">2025-01-16 ...</text>
+<rect x="20" y="1970" width="1160" height="30" fill="#ffffff"/>
+<line x1="20" y1="2000" x2="1180" y2="2000" class="grid-line"/>
+<text x="35.0" y="1989" class="row-text">HDD002</text>
+<text x="151.0" y="1989" class="row-text">Seagate Exp...</text>
+<text x="267.0" y="1989" class="row-text">External Drive</text>
+<text x="383.0" y="1989" class="row-text">SN-22112-HDD</text>
+<text x="499.0" y="1989" class="row-text">Aaryan Shah</text>
+<text x="615.0" y="1989" class="row-text">2024-01-21 ...</text>
+<text x="731.0" y="1989" class="row-text">active</text>
+<text x="847.0" y="1989" class="row-text">aaryan.shah...</text>
+<text x="963.0" y="1989" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="1989" class="row-text">2025-01-21 ...</text>
+<rect x="20" y="2000" width="1160" height="30" fill="#fff9e0"/>
+<line x1="20" y1="2030" x2="1180" y2="2030" class="grid-line"/>
+<text x="35.0" y="2019" class="row-text">CAM002</text>
+<text x="151.0" y="2019" class="row-text">Anker Power...</text>
+<text x="267.0" y="2019" class="row-text">Webcam</text>
+<text x="383.0" y="2019" class="row-text">SN-11002-CAM</text>
+<text x="499.0" y="2019" class="row-text">Aaryan Shah</text>
+<text x="615.0" y="2019" class="row-text">2024-01-23 ...</text>
+<text x="731.0" y="2019" class="row-text">active</text>
+<text x="847.0" y="2019" class="row-text">aaryan.shah...</text>
+<text x="963.0" y="2019" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="2019" class="row-text">2025-01-23 ...</text>
+<rect x="20" y="2030" width="1160" height="30" fill="#ffffff"/>
+<line x1="20" y1="2060" x2="1180" y2="2060" class="grid-line"/>
+<text x="35.0" y="2049" class="row-text">HDD003</text>
+<text x="151.0" y="2049" class="row-text">SanDisk Ext...</text>
+<text x="267.0" y="2049" class="row-text">External Drive</text>
+<text x="383.0" y="2049" class="row-text">SN-22113-HDD</text>
+<text x="499.0" y="2049" class="row-text">Avani Mahajan</text>
+<text x="615.0" y="2049" class="row-text">2024-02-03 ...</text>
+<text x="731.0" y="2049" class="row-text">active</text>
+<text x="847.0" y="2049" class="row-text">avani.m@com...</text>
+<text x="963.0" y="2049" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="2049" class="row-text">2025-02-03 ...</text>
+<rect x="20" y="2060" width="1160" height="30" fill="#fff9e0"/>
+<line x1="20" y1="2090" x2="1180" y2="2090" class="grid-line"/>
+<text x="35.0" y="2079" class="row-text">HDD004</text>
+<text x="151.0" y="2079" class="row-text">Samsung T7 1TB</text>
+<text x="267.0" y="2079" class="row-text">External Drive</text>
+<text x="383.0" y="2079" class="row-text">SN-22114-HDD</text>
+<text x="499.0" y="2079" class="row-text">Yash Wardhan</text>
+<text x="615.0" y="2079" class="row-text">2024-02-13 ...</text>
+<text x="731.0" y="2079" class="row-text">active</text>
+<text x="847.0" y="2079" class="row-text">yash.w@comp...</text>
+<text x="963.0" y="2079" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="2079" class="row-text">2025-02-13 ...</text>
+<rect x="20" y="2090" width="1160" height="30" fill="#ffffff"/>
+<line x1="20" y1="2120" x2="1180" y2="2120" class="grid-line"/>
+<text x="35.0" y="2109" class="row-text">HDD005</text>
+<text x="151.0" y="2109" class="row-text">Crucial X8 2TB</text>
+<text x="267.0" y="2109" class="row-text">External Drive</text>
+<text x="383.0" y="2109" class="row-text">SN-22115-HDD</text>
+<text x="499.0" y="2109" class="row-text">Kritika Bha...</text>
+<text x="615.0" y="2109" class="row-text">2024-02-26 ...</text>
+<text x="731.0" y="2109" class="row-text">inactive</text>
+<text x="847.0" y="2109" class="row-text">kritika.b@c...</text>
+<text x="963.0" y="2109" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="2109" class="row-text">2024-08-26 ...</text>
+<rect x="20" y="2120" width="1160" height="30" fill="#fff9e0"/>
+<line x1="20" y1="2150" x2="1180" y2="2150" class="grid-line"/>
+<text x="35.0" y="2139" class="row-text">PRN004</text>
+<text x="151.0" y="2139" class="row-text">Epson EcoTa...</text>
+<text x="267.0" y="2139" class="row-text">Printer</text>
+<text x="383.0" y="2139" class="row-text">SN-44334-PRN</text>
+<text x="499.0" y="2139" class="row-text">Nakul Grover</text>
+<text x="615.0" y="2139" class="row-text">2024-02-29 ...</text>
+<text x="731.0" y="2139" class="row-text">active</text>
+<text x="847.0" y="2139" class="row-text">nakul.grove...</text>
+<text x="963.0" y="2139" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="2139" class="row-text">2026-02-28 ...</text>
+<rect x="20" y="2150" width="1160" height="30" fill="#ffffff"/>
+<line x1="20" y1="2180" x2="1180" y2="2180" class="grid-line"/>
+<text x="35.0" y="2169" class="row-text">NAS003</text>
+<text x="151.0" y="2169" class="row-text">Asustor Loc...</text>
+<text x="267.0" y="2169" class="row-text">NAS Storage</text>
+<text x="383.0" y="2169" class="row-text">SN-66353-NAS</text>
+<text x="499.0" y="2169" class="row-text">Prisha Jain</text>
+<text x="615.0" y="2169" class="row-text">2024-02-19 ...</text>
+<text x="731.0" y="2169" class="row-text">inactive</text>
+<text x="847.0" y="2169" class="row-text">prisha.jain...</text>
+<text x="963.0" y="2169" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="2169" class="row-text">2025-02-19 ...</text>
+<rect x="20" y="2180" width="1160" height="30" fill="#fff9e0"/>
+<line x1="20" y1="2210" x2="1180" y2="2210" class="grid-line"/>
+<text x="35.0" y="2199" class="row-text">UPS004</text>
+<text x="151.0" y="2199" class="row-text">APC Back-UP...</text>
+<text x="267.0" y="2199" class="row-text">UPS</text>
+<text x="383.0" y="2199" class="row-text">SN-55344-UPS</text>
+<text x="499.0" y="2199" class="row-text">Utkarsh Tri...</text>
+<text x="615.0" y="2199" class="row-text">2024-02-21 ...</text>
+<text x="731.0" y="2199" class="row-text">need repair</text>
+<text x="847.0" y="2199" class="row-text">utkarsh.t@c...</text>
+<text x="963.0" y="2199" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="2199" class="row-text">2024-05-21 ...</text>
+<rect x="20" y="2210" width="1160" height="30" fill="#ffffff"/>
+<line x1="20" y1="2240" x2="1180" y2="2240" class="grid-line"/>
+<text x="35.0" y="2229" class="row-text">PRN003</text>
+<text x="151.0" y="2229" class="row-text">Brother HL-...</text>
+<text x="267.0" y="2229" class="row-text">Printer</text>
+<text x="383.0" y="2229" class="row-text">SN-44333-PRN</text>
+<text x="499.0" y="2229" class="row-text">Samaira Bhatia</text>
+<text x="615.0" y="2229" class="row-text">2024-02-11 ...</text>
+<text x="731.0" y="2229" class="row-text">need repair</text>
+<text x="847.0" y="2229" class="row-text">samaira.b@c...</text>
+<text x="963.0" y="2229" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="2229" class="row-text">2024-05-11 ...</text>
+<rect x="20" y="2240" width="1160" height="30" fill="#fff9e0"/>
+<line x1="20" y1="2270" x2="1180" y2="2270" class="grid-line"/>
+<text x="35.0" y="2259" class="row-text">WAP005</text>
+<text x="151.0" y="2259" class="row-text">TP-Link Oma...</text>
+<text x="267.0" y="2259" class="row-text">Access Point</text>
+<text x="383.0" y="2259" class="row-text">SN-33225-WAP</text>
+<text x="499.0" y="2259" class="row-text">Madhav Anand</text>
+<text x="615.0" y="2259" class="row-text">2024-02-19 ...</text>
+<text x="731.0" y="2259" class="row-text">dead</text>
+<text x="847.0" y="2259" class="row-text">madhav.anan...</text>
+<text x="963.0" y="2259" class="row-text">+91 98765 4...</text>
+<text x="1079.0" y="2259" class="row-text">2024-02-25 ...</text>
+</svg>

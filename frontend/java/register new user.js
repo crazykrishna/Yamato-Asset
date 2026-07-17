@@ -1,19 +1,19 @@
 // SAFE SIDEBAR NAVIGATION LISTENERS
-document.getElementById('home')?.addEventListener("click", () => { window.location.href = "home.html"; });
-document.getElementById('assets-list')?.addEventListener("click", () => { window.location.href = "assets list.html"; });
-document.getElementById('inventory')?.addEventListener("click", () => { window.location.href = "inventory.html"; });
-document.getElementById('reports')?.addEventListener("click", () => { window.location.href = "reports.html"; });
+document.getElementById('home')?.addEventListener("click", () => { window.location.href = "/home"; });
+document.getElementById('assets-list')?.addEventListener("click", () => { window.location.href = "/assets-list"; });
+document.getElementById('inventory')?.addEventListener("click", () => { window.location.href = "/inventory"; });
+document.getElementById('reports')?.addEventListener("click", () => { window.location.href = "/reports"; });
 document.getElementById('log-out')?.addEventListener("click", () => {
     alert("Log-Out Successful! Back to login page.");
-    window.location.href = "login.html"; 
+    window.location.href = "/login"; 
 });
-document.getElementById('find')?.addEventListener("click", () => { window.location.href = "inventory.html"; });
-document.getElementById('Register-Asset')?.addEventListener("click", () => { window.location.href = "register asset.html"; });
-document.getElementById('assests-list')?.addEventListener("click", () => { window.location.href = "assets list.html"; });
-document.getElementById('Register-New-User')?.addEventListener("click", () => { window.location.href = "register new user.html"; });
-document.getElementById('profilee')?.addEventListener("click", () => { window.location.href = "profile.html"; });
+document.getElementById('find')?.addEventListener("click", () => { window.location.href = "/inventory"; });
+document.getElementById('Register-Asset')?.addEventListener("click", () => { window.location.href = "/register-asset"; });
+document.getElementById('assests-list')?.addEventListener("click", () => { window.location.href = "/assets-list"; });
+document.getElementById('Register-New-User')?.addEventListener("click", () => { window.location.href = "/register-user"; });
+document.getElementById('profilee')?.addEventListener("click", () => { window.location.href = "/profile"; });
 
-const post_url = 'http://127.0.0.1:8000/api/users/employee';
+const post_url = '/api/users/employee';
 
 document.getElementById('register-user-form')?.addEventListener('submit', async (event) => {
     event.preventDefault(); 
@@ -47,7 +47,7 @@ document.getElementById('register-user-form')?.addEventListener('submit', async 
         if (response.ok) {
             alert('Employee record successfully saved to the employee database!');
             document.getElementById('register-user-form').reset(); 
-            window.location.href = "assets list.html"; 
+            window.location.href = "/assets-list"; 
         } else {
             alert('Server Error: ' + JSON.stringify(result.detail || "Validation check failed."));
         }

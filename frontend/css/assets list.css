@@ -1,7 +1,7 @@
+/* The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space. */
 @font-face {
     font-family: main;
-    src: url(/frontend/fonts/IBM_PLEX_SERIF/IBMPlexSerif-Light.ttf);
-
+    src: url(../fonts/IBM_PLEX_SERIF/IBMPlexSerif-Light.ttf);
 }
 
 *{
@@ -183,13 +183,14 @@ header #contentbar button:hover, #profile button:hover{
     margin-left: 10px;
     background-color: white;
 }
-select{
+select, input[type="date"]{
     border: 0;
     background-color: white;
     width: 100%;
     height: 35px;
     border-radius: 10px;
     border: 1px solid gray;
+    padding: 0 10px;
 }
 #filters{
     display: flex;

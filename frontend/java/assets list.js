@@ -1,40 +1,103 @@
 // SAFE NAVIGATION LISTENERS
-document.getElementById('home')?.addEventListener("click",() => { window.location.href = "home.html"; });
-document.getElementById('assets-list')?.addEventListener("click",() => { window.location.href = "assets list.html"; });
-document.getElementById('inventory')?.addEventListener("click",() => { window.location.href = "inventory.html"; });
-document.getElementById('reports')?.addEventListener("click",() => { window.location.href = "reports.html"; });
+document.getElementById('home')?.addEventListener("click",() => { window.location.href = "/home"; });
+document.getElementById('assets-list')?.addEventListener("click",() => { window.location.href = "/assets-list"; });
+document.getElementById('inventory')?.addEventListener("click",() => { window.location.href = "/inventory"; });
+document.getElementById('reports')?.addEventListener("click",() => { window.location.href = "/reports"; });
 document.getElementById('log-out')?.addEventListener("click",() => {
     alert("Log-Out Successful! Back to login page. ");
-    window.location.href = "login.html"; 
+    window.location.href = "/login"; 
 });
-document.getElementById('find')?.addEventListener("click",() => { window.location.href = "inventory.html"; });
-document.getElementById('Register-Asset')?.addEventListener("click",() => { window.location.href = "register asset.html"; });
-document.getElementById('assests-list')?.addEventListener("click",() => { window.location.href = "assets list.html"; });
-document.getElementById('Register-New-User')?.addEventListener("click",() => { window.location.href = "register new user.html"; });
-document.getElementById('profilee')?.addEventListener("click",() => { window.location.href = "profile.html"; });
+document.getElementById('find')?.addEventListener("click",() => { window.location.href = "/inventory"; });
+document.getElementById('Register-Asset')?.addEventListener("click",() => { window.location.href = "/register-asset"; });
+document.getElementById('assests-list')?.addEventListener("click",() => { window.location.href = "/assets-list"; });
+document.getElementById('Register-New-User')?.addEventListener("click",() => { window.location.href = "/register-user"; });
+document.getElementById('profilee')?.addEventListener("click",() => { window.location.href = "/profile"; });
 
-const api_url = 'http://127.0.0.1:8000/api/regAssets';
-const searchinput = document.getElementById('table-search');
+const api_url = '/api/regAssets';
 
-// Search Bar Client Filtering logic
-if (searchinput){
-    searchinput.addEventListener('input', (event) => {
-        const searchitem = event.target.value.toLowerCase();
-        const tablebody = document.getElementById('gridBody'); // Updated to point to dynamic body ID
-        if (!tablebody) return;
-        const rows = tablebody.getElementsByTagName('tr');
+let colIndices = {
+    status: -1,
+    type: -1,
+    date: -1
+};
 
-        for (let i = 0; i < rows.length; i++){
-            const row = rows[i];
-            const rowText = row.textContent.toLowerCase();
-            if(rowText.includes(searchitem)){
-                row.style.display = "";
-            } else {
-                row.style.display = "none";
-            }
+function populateFilterOptions(selectElement, dataset, columnName, defaultText) {
+    if (!selectElement || dataset.length === 0) return;
+    
+    const sampleKeys = Object.keys(dataset[0]);
+    const actualKey = sampleKeys.find(key => {
+        const kLower = key.toLowerCase();
+        if (columnName === 'type') {
+            return kLower.includes('type') || kLower.includes('category');
         }
+        return kLower.includes(columnName.toLowerCase());
+    });
+    
+    const uniqueValues = new Set();
+    if (actualKey) {
+        dataset.forEach(row => {
+            const val = row[actualKey];
+            if (val !== null && val !== undefined && val !== "") {
+                uniqueValues.add(String(val).trim());
+            }
+        });
+    }
+    
+    selectElement.innerHTML = `<option value="">${defaultText}</option>`;
+    
+    Array.from(uniqueValues).sort().forEach(val => {
+        const opt = document.createElement('option');
+        opt.value = val.toLowerCase();
+        opt.innerText = val;
+        selectElement.appendChild(opt);
     });
 }
+
+// Consolidated Client Filtering logic
+function applyFilters() {
+    const searchVal = document.getElementById('table-search')?.value.toLowerCase() || '';
+    const statusVal = document.getElementById('filter-status')?.value.toLowerCase() || '';
+    const typeVal = document.getElementById('filter-type')?.value.toLowerCase() || '';
+    const dateVal = document.getElementById('filter-date')?.value || '';
+
+    const tableBody = document.getElementById('gridBody');
+    if (!tableBody) return;
+    const rows = tableBody.getElementsByTagName('tr');
+
+    for (let i = 0; i < rows.length; i++) {
+        const row = rows[i];
+        if (row.cells.length <= 1) continue; // Skip helper rows like "No records found"
+
+        // 1. Search text filter
+        const rowText = row.textContent.toLowerCase();
+        const matchesSearch = !searchVal || rowText.includes(searchVal);
+
+        // 2. Status filter
+        const statusCell = colIndices.status !== -1 ? row.cells[colIndices.status]?.textContent.trim().toLowerCase() || "" : "";
+        const matchesStatus = !statusVal || statusCell === statusVal;
+
+        // 3. Type filter
+        const typeCell = colIndices.type !== -1 ? row.cells[colIndices.type]?.textContent.toLowerCase() || "" : "";
+        const matchesType = !typeVal || typeCell.includes(typeVal);
+
+        // 4. Date filter
+        const dateCell = colIndices.date !== -1 ? row.cells[colIndices.date]?.textContent.toLowerCase() || "" : "";
+        const matchesDate = !dateVal || dateCell.startsWith(dateVal);
+
+        if (matchesSearch && matchesStatus && matchesType && matchesDate) {
+            row.style.display = "";
+        } else {
+            row.style.display = "none";
+        }
+    }
+}
+
+// Bind event listeners to filter controls
+document.getElementById('table-search')?.addEventListener('input', applyFilters);
+document.getElementById('filter-status')?.addEventListener('change', applyFilters);
+document.getElementById('filter-type')?.addEventListener('change', applyFilters);
+document.getElementById('filter-date')?.addEventListener('input', applyFilters);
+document.getElementById('filter-date')?.addEventListener('change', applyFilters);
 
 // RESTORED & FIXED: Core data engine to fetch current metrics and invoke dynamic parsing
 async function fetchAssets() {
@@ -67,6 +130,15 @@ function renderDynamicAssetTable(assets) {
 
     // 1. Grab columns dynamically based on first data object attributes
     const columns = Object.keys(assets[0]);
+    colIndices.status = columns.findIndex(col => col.toLowerCase().includes('status'));
+    colIndices.type = columns.findIndex(col => col.toLowerCase().includes('type') || col.toLowerCase().includes('category'));
+    colIndices.date = columns.findIndex(col => col.toLowerCase().includes('date'));
+
+    const statusSelect = document.getElementById('filter-status');
+    const typeSelect = document.getElementById('filter-type');
+
+    populateFilterOptions(statusSelect, assets, 'status', 'Filter By Status');
+    populateFilterOptions(typeSelect, assets, 'type', 'Filter By Type');
 
     // 2. Render headers line items
     const headerRow = document.createElement('tr');
@@ -92,7 +164,14 @@ function renderDynamicAssetTable(assets) {
 
         columns.forEach(col => {
             const td = document.createElement('td');
-            td.innerText = asset[col] !== null && asset[col] !== undefined ? asset[col] : "";
+            let cellValue = asset[col] !== null && asset[col] !== undefined ? asset[col] : "";
+
+            // Clean date fields cleanly if they contain ISO timestamps
+            if (col.toLowerCase().includes('date') && cellValue.length > 10) {
+                cellValue = cellValue.substring(0, 10);
+            }
+
+            td.innerText = cellValue;
             
             // Assign edit markers to parameters unless restricted explicitly
             if (col !== 'email' && col !== 'phone_number' && col !== 'assetId' && col !== 'assetid') {
@@ -113,6 +192,7 @@ function renderDynamicAssetTable(assets) {
 
     // Fire listeners trigger bound to fresh elements
     attachActionListeners();
+    applyFilters();
 }
 
 function attachActionListeners() {
@@ -170,7 +250,7 @@ function attachActionListeners() {
             updatedData.employee_name = updatedData.employee_name || updatedData.employeeName || '';
 
             try {
-                const response = await fetch(`http://127.0.0.1:8000/api/assigned-assets/update?assetId=${updatedData.assetId}`, {
+                const response = await fetch(`/api/assigned-assets/update?assetId=${updatedData.assetId}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(updatedData)

@@ -1,20 +1,26 @@
 // Connected directly to your unified registeredassets core engine 
-const api_url = 'http://127.0.0.1:8000/api/assets';
+const api_url = '/api/assets';
 
 // SAFE NAVIGATION LISTENERS
-document.getElementById('home')?.addEventListener("click", () => { window.location.href = "home.html"; });
-document.getElementById('assets-list')?.addEventListener("click", () => { window.location.href = "assets list.html"; });
-document.getElementById('inventory')?.addEventListener("click", () => { window.location.href = "inventory.html"; });
-document.getElementById('reports')?.addEventListener("click", () => { window.location.href = "reports.html"; });
+document.getElementById('home')?.addEventListener("click", () => { window.location.href = "/home"; });
+document.getElementById('assets-list')?.addEventListener("click", () => { window.location.href = "/assets-list"; });
+document.getElementById('inventory')?.addEventListener("click", () => { window.location.href = "/inventory"; });
+document.getElementById('reports')?.addEventListener("click", () => { window.location.href = "/reports"; });
 document.getElementById('log-out')?.addEventListener("click", () => {
     alert("Log-Out Successful! Back to login page.");
-    window.location.href = "login.html"; 
+    window.location.href = "/login"; 
 });
-document.getElementById('find')?.addEventListener("click", () => { window.location.href = "inventory.html"; });
-document.getElementById('Register-Asset')?.addEventListener("click", () => { window.location.href = "register asset.html"; });
-document.getElementById('assests-list')?.addEventListener("click", () => { window.location.href = "assets list.html"; });
-document.getElementById('Register-New-User')?.addEventListener("click", () => { window.location.href = "register new user.html"; });
-document.getElementById('profilee')?.addEventListener("click", () => { window.location.href = "profile.html"; });
+document.getElementById('find')?.addEventListener("click", () => { window.location.href = "/inventory"; });
+document.getElementById('Register-Asset')?.addEventListener("click", () => { window.location.href = "/register-asset"; });
+document.getElementById('assests-list')?.addEventListener("click", () => { window.location.href = "/assets-list"; });
+document.getElementById('Register-New-User')?.addEventListener("click", () => { window.location.href = "/register-user"; });
+document.getElementById('profilee')?.addEventListener("click", () => { window.location.href = "/profile"; });
+
+let colIndices = {
+    status: -1,
+    type: -1,
+    dept: -1
+};
 
 // REFACTORED UNIVERSAL CLIENT SEARCH & DROP FILTER ENGINE
 function filterTable() {
@@ -32,17 +38,19 @@ function filterTable() {
 
     for (let i = 0; i < rows.length; i++) {
         const row = rows[i];
+        if (row.cells.length <= 1) continue;
+
         const rowText = row.textContent.toLowerCase();
-
-        // Checks specific tracking column coordinates safely via data attributes
-        const assetTypeCell = row.querySelector('[data-field*="type"]')?.textContent.toLowerCase() || "";
-        const statusCell = row.querySelector('[data-field*="status"]')?.textContent.toLowerCase() || "";
-
         const matchesSearch = !searchFilter || rowText.includes(searchFilter);
-        const matchesStatus = !selectStatus || statusCell.includes(selectStatus);
-        const matchesType = !selectType || assetTypeCell.includes(selectType);
-        // Department fallback text checking
-        const matchesDept = !selectDept || rowText.includes(selectDept);
+
+        const statusCell = colIndices.status !== -1 ? row.cells[colIndices.status]?.textContent.trim().toLowerCase() || "" : "";
+        const matchesStatus = !selectStatus || statusCell === selectStatus;
+
+        const typeCell = colIndices.type !== -1 ? row.cells[colIndices.type]?.textContent.toLowerCase() || "" : "";
+        const matchesType = !selectType || typeCell.includes(selectType);
+
+        const deptCell = colIndices.dept !== -1 ? row.cells[colIndices.dept]?.textContent.toLowerCase() || "" : "";
+        const matchesDept = !selectDept || deptCell.includes(selectDept);
 
         if (matchesSearch && matchesStatus && matchesType && matchesDept) {
             row.style.display = "";
@@ -50,6 +58,41 @@ function filterTable() {
             row.style.display = "none";
         }
     }
+}
+
+function populateFilterOptions(selectElement, dataset, columnName, defaultText) {
+    if (!selectElement || dataset.length === 0) return;
+    
+    const sampleKeys = Object.keys(dataset[0]);
+    const actualKey = sampleKeys.find(key => {
+        const kLower = key.toLowerCase();
+        if (columnName === 'type') {
+            return kLower.includes('type') || kLower.includes('category');
+        }
+        if (columnName === 'department') {
+            return kLower.includes('dept') || kLower.includes('department') || kLower.includes('location') || kLower.includes('remarks');
+        }
+        return kLower.includes(columnName.toLowerCase());
+    });
+    
+    const uniqueValues = new Set();
+    if (actualKey) {
+        dataset.forEach(row => {
+            const val = row[actualKey];
+            if (val !== null && val !== undefined && val !== "") {
+                uniqueValues.add(String(val).trim());
+            }
+        });
+    }
+    
+    selectElement.innerHTML = `<option value="">${defaultText}</option>`;
+    
+    Array.from(uniqueValues).sort().forEach(val => {
+        const opt = document.createElement('option');
+        opt.value = val.toLowerCase();
+        opt.innerText = val;
+        selectElement.appendChild(opt);
+    });
 }
 
 // Bind universal handlers safely
@@ -88,6 +131,17 @@ function renderDynamicInventoryTable(assets) {
 
     // 1. Extract spreadsheet columns dynamically
     const columns = Object.keys(assets[0]);
+    colIndices.status = columns.findIndex(col => col.toLowerCase().includes('status'));
+    colIndices.type = columns.findIndex(col => col.toLowerCase().includes('type') || col.toLowerCase().includes('category'));
+    colIndices.dept = columns.findIndex(col => col.toLowerCase().includes('dept') || col.toLowerCase().includes('department') || col.toLowerCase().includes('location') || col.toLowerCase().includes('remarks'));
+
+    const statusSelect = document.querySelector('#filter-by-status select');
+    const typeSelect = document.querySelector('#filter-by-type select');
+    const deptSelect = document.querySelector('#filter-by-department select');
+
+    populateFilterOptions(statusSelect, assets, 'status', 'All Statuses');
+    populateFilterOptions(typeSelect, assets, 'type', 'All Types');
+    populateFilterOptions(deptSelect, assets, 'department', 'All Departments');
 
     // 2. Render Header Nodes
     const headerRow = document.createElement('tr');
@@ -186,7 +240,7 @@ function attachActionListeners() {
             });
 
             try {
-                const response = await fetch(`http://127.0.0.1:8000/api/assets/update`, {
+                const response = await fetch(`/api/assets/update`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(updatedData)

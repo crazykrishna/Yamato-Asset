@@ -1,6 +1,7 @@
+/* The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space. */
 @font-face {
     font-family: 'Montserrat';
-    src: url(/frontend/fonts/Montserrat/Montserrat-Italic-VariableFont_wght.ttf);
+    src: url(../fonts/Montserrat/Montserrat-Italic-VariableFont_wght.ttf);
 }
 
 * {

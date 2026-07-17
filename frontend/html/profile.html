@@ -78,14 +78,8 @@
 
             <div id="list">
                 <h1>View Employee Reports</h1>
-                <div id="details">
-                    <div id="all">
-                        <div id="sub-1"><i class="ri-file-list-2-line"></i> Krishna Soni</div>
-                        <div class="sub">
-                            <button class="special">View</button>
-                            <button class="svg">Edit</button>
-                        </div>
-                    </div>
+                <div id="details" style="max-height: 320px; overflow-y: auto; padding-right: 5px;">
+                    <!-- Loaded dynamically from the employee database -->
                 </div>
             </div>
 
@@ -176,6 +170,51 @@
             <div class="modal-footer">
                 <button id="reset-step2-back" class="m-btn btn-cancel">&#8592; Back</button>
                 <button id="reset-step2-confirm" class="m-btn btn-confirm">Save Password</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Employee Report Details Card Modal -->
+    <div id="employee-report-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content" style="width: 550px;">
+            <div class="modal-header">
+                <h3><i class="ri-user-card-line" style="color: #f5cf04; font-size: 24px; vertical-align: middle;"></i> Employee Profile Card</h3>
+                <span class="close-btn" id="employee-modal-close-btn" style="cursor: pointer; font-size: 24px; color: #aaa;">&times;</span>
+            </div>
+            <div class="modal-body" style="text-align: left; margin-bottom: 20px;">
+                <!-- Employee Info Grid -->
+                <div style="background-color: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #f5cf04;">
+                    <h4 style="margin: 0 0 10px 0; color: #333;" id="emp-card-name">Employee Name</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 13px; color: #555;">
+                        <div><strong>Employee ID:</strong> <span id="emp-card-id">N/A</span></div>
+                        <div><strong>Department:</strong> <span id="emp-card-dept">N/A</span></div>
+                        <div><strong>Email:</strong> <span id="emp-card-email">N/A</span></div>
+                        <div><strong>Mobile:</strong> <span id="emp-card-mobile">N/A</span></div>
+                        <div style="grid-column: span 2;"><strong>Designation:</strong> <span id="emp-card-desg">N/A</span></div>
+                    </div>
+                </div>
+                
+                <!-- Assigned Assets List -->
+                <h4 style="margin: 0 0 10px 0; color: #333; font-size: 15px;">Assigned Assets</h4>
+                <div style="max-height: 200px; overflow-y: auto; border: 1px solid #eee; border-radius: 8px;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                        <thead>
+                            <tr style="background-color: #edf2f7; text-align: left;">
+                                <th style="padding: 8px; border-bottom: 1px solid #ddd;">Asset ID</th>
+                                <th style="padding: 8px; border-bottom: 1px solid #ddd;">Asset Name</th>
+                                <th style="padding: 8px; border-bottom: 1px solid #ddd;">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="emp-card-assets-body">
+                            <tr>
+                                <td colspan="3" style="padding: 10px; text-align: center; color: #999;">No assets assigned.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer" style="display: flex; justify-content: flex-end;">
+                <button id="employee-modal-close-btn-bottom" style="padding: 10px 20px; border: 1px solid #ddd; border-radius: 8px; background: #fff; cursor: pointer;">Close</button>
             </div>
         </div>
     </div>

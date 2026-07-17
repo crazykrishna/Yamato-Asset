@@ -1,7 +1,7 @@
-const count_api_url = 'http://127.0.0.1:8000/api/assets/count';
-const active_api_url = 'http://127.0.0.1:8000/api/assets/active-count';
-const categories_api_url = 'http://127.0.0.1:8000/api/assets/categories-count';
-const status_api_url = 'http://127.0.0.1:8000/api/assets/status-distribution';
+const count_api_url = '/api/assets/count';
+const active_api_url = '/api/assets/active-count';
+const categories_api_url = '/api/assets/categories-count';
+const status_api_url = '/api/assets/status-distribution';
 let myAssetChart = null;
 
 // Target DOM Elements
@@ -39,19 +39,19 @@ async function updateDashboard() {
 }
 
 // SAFE NAVIGATION LISTENERS
-document.getElementById('home')?.addEventListener("click", () => { window.location.href = "home.html"; });
-document.getElementById('assets-list')?.addEventListener("click", () => { window.location.href = "assets list.html"; });
-document.getElementById('inventory')?.addEventListener("click", () => { window.location.href = "inventory.html"; });
-document.getElementById('reports')?.addEventListener("click", () => { window.location.href = "reports.html"; });
+document.getElementById('home')?.addEventListener("click", () => { window.location.href = "/home"; });
+document.getElementById('assets-list')?.addEventListener("click", () => { window.location.href = "/assets-list"; });
+document.getElementById('inventory')?.addEventListener("click", () => { window.location.href = "/inventory"; });
+document.getElementById('reports')?.addEventListener("click", () => { window.location.href = "/reports"; });
 document.getElementById('log-out')?.addEventListener("click", () => {
     alert("Log-Out Successful! Back to login page.");
-    window.location.href = "login.html"; 
+    window.location.href = "/login"; 
 });
-document.getElementById('find')?.addEventListener("click", () => { window.location.href = "inventory.html"; });
-document.getElementById('Register-Asset')?.addEventListener("click", () => { window.location.href = "register asset.html"; });
-document.getElementById('assests-list')?.addEventListener("click", () => { window.location.href = "assets list.html"; });
-document.getElementById('Register-New-User')?.addEventListener("click", () => { window.location.href = "register new user.html"; });
-document.getElementById('profilee')?.addEventListener("click", () => { window.location.href = "profile.html"; });
+document.getElementById('find')?.addEventListener("click", () => { window.location.href = "/inventory"; });
+document.getElementById('Register-Asset')?.addEventListener("click", () => { window.location.href = "/register-asset"; });
+document.getElementById('assests-list')?.addEventListener("click", () => { window.location.href = "/assets-list"; });
+document.getElementById('Register-New-User')?.addEventListener("click", () => { window.location.href = "/register-user"; });
+document.getElementById('profilee')?.addEventListener("click", () => { window.location.href = "/profile"; });
 
 // GREETING ENGINE
 const mainn = document.getElementById('show');
@@ -96,13 +96,7 @@ async function renderStatusDoughnutChart() {
                 datasets: [{
                     label: 'Total Assets Count',
                     data: dataValues,
-                    backgroundColor: [
-                        '#36A2EB', // Blue
-                        '#FF9F43', // Orange
-                        '#FF4D4D', // Red
-                        '#2ED573', // Green
-                        '#747D8C'  // Gray
-                    ],
+                    backgroundColor: labels.map((_, i) => `hsl(${(i * (360 / Math.max(1, labels.length))) % 360}, 75%, 60%)`),
                     borderWidth: 2,
                     borderColor: '#ffffff'
                 }]

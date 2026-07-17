@@ -61,30 +61,27 @@
                     </div>
                 <div id="filters">
                     <div id="filter-by-status">
-                        <select name="category" id="asset-category">
+                        <select name="category" id="filter-status">
                         <option value="">Filter By Status</option>
-                        <option value="laptops">Laptops</option>
-                        <option value="servers">Servers</option>
-                        <option value="monitors">Monitors</option>
-                        <option value="furniture">Furniture</option>
+                        <!-- <option value="In Use">In Use</option> -->
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                        <option value="Broken">Dead</option>
+                        <option value="Need Repair">Need Repair</option>
                     </select>
                 </div>
-                    <div id="filter-by-type"><select name="category" id="asset-category">
+                    <div id="filter-by-type">
+                        <select name="category" id="filter-type">
                         <option value="">Filter By Type</option>
-                        <option value="laptops">Laptops</option>
-                        <option value="servers">Servers</option>
-                        <option value="monitors">Monitors</option>
-                        <option value="furniture">Furniture</option>
+                        <option value="laptop">Laptops</option>
+                        <option value="server">Servers</option>
+                        <option value="monitor">Monitors</option>
+                        <option value="mouse">Mouse</option>
+                        <option value="Keyboard">Keyboard</option>
                     </select>
                 </div>
-                <div id="filter-by-room">
-                    <select name="category" id="asset-category">
-                        <option value="">Filter By Room</option>
-                        <option value="laptops">Laptops</option>
-                        <option value="servers">Servers</option>
-                        <option value="monitors">Monitors</option>
-                        <option value="furniture">Furniture</option>
-                    </select>
+                <div id="filter-by-date">
+                    <input type="date" placeholder="Filter By Date" id="filter-date">
                 </div>
                 </div>
             </div>

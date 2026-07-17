@@ -41,7 +41,7 @@ loginForm.addEventListener('submit', async (e) => {
     btn.disabled = true;
 
     try {
-        const response = await fetch('http://localhost:8000/api/login', {
+        const response = await fetch('/api/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password })
@@ -52,7 +52,7 @@ loginForm.addEventListener('submit', async (e) => {
         if (data.success) {
             showToast('Login successful! Redirecting...', 'success');
             localStorage.setItem('user', JSON.stringify(data.user));
-            setTimeout(() => { window.location.href = '/frontend/html/home.html'; }, 1200);
+            setTimeout(() => { window.location.href = '/home'; }, 1200);
         } else {
             showToast(data.detail || data.message || 'Invalid credentials.', 'error');
             btn.textContent = originalText;
