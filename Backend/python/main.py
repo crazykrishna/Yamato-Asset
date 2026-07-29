@@ -41,12 +41,31 @@ def hash_password(plain: str) -> str:
     return hashed_bytes.decode("utf-8")
 
 def verify_password(plain: str, hashed: str) -> bool:
-    """Verify a bcrypt hash. Falls back to plain-text for legacy rows."""
+    """
+    Verify a password against a stored hash. Tries three strategies in order:
+    1. bcrypt with SHA-256 pre-hash   (passwords hashed via hash_password() in this app)
+    2. bcrypt without SHA-256 pre-hash (passwords hashed with plain bcrypt elsewhere)
+    3. Plain-text comparison           (legacy rows stored before any hashing was added)
+    """
+    if not hashed:
+        return False
+
+    # Strategy 1: bcrypt + SHA-256 pre-hash (our current standard)
     try:
-        return _bcrypt.checkpw(_preprocess(plain), hashed.encode("utf-8"))
+        if _bcrypt.checkpw(_preprocess(plain), hashed.encode("utf-8")):
+            return True
     except Exception:
-        # Legacy plain-text fallback for rows inserted before hashing
-        return plain == hashed
+        pass
+
+    # Strategy 2: plain bcrypt (no SHA-256 step — passwords set outside this app)
+    try:
+        if _bcrypt.checkpw(plain.encode("utf-8"), hashed.encode("utf-8")):
+            return True
+    except Exception:
+        pass
+
+    # Strategy 3: plain-text fallback (legacy rows with unhashed passwords)
+    return plain == hashed
 
 
 
@@ -54,7 +73,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://your-frontend-domain.netlify.app", "http://localhost:5173"], 
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -68,7 +87,7 @@ _ROOT       = os.path.normpath(os.path.join(_HERE, "..", ".."))   # …/Yamato
 _FRONTEND   = os.path.join(_ROOT, "frontend")                     # …/Yamato/frontend
 _LOGIN_HTML = os.path.join(_FRONTEND, "html", "login.html")       # …/frontend/html/login.html
 _HOME_HTML = os.path.join(_FRONTEND, "html", "home.html")       # …/frontend/html/login.html
-_ASSETS_LIST_HTML = os.path.join(_FRONTEND, "html", "asset list.html")       # …/frontend/html/login.html
+_ASSETS_LIST_HTML = os.path.join(_FRONTEND, "html", "assets list.html")       # …/frontend/html/assets list.html
 _INVENTORY_HTML = os.path.join(_FRONTEND, "html", "inventory.html")       # …/frontend/html/login.html
 _PROFILE_HTML = os.path.join(_FRONTEND, "html", "profile.html")       # …/frontend/html/login.html
 _REGISTER_ASSET_HTML = os.path.join(_FRONTEND, "html", "register asset.html")       # …/frontend/html/login.html
@@ -127,14 +146,7 @@ class AssignedAssetUpdateSchema(BaseModel):
 def export_db_to_sql():
     pass
 
-# CORS Middleware
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# (CORS middleware already registered above — duplicate removed)
 
 # ----------------------------------------------------
 # ROUTES & LOGIC
@@ -144,7 +156,7 @@ async def read_root():
     return FileResponse(_LOGIN_HTML)
 
 @app.get("/home.html")
-def read_root():
+def serve_home_html():
     return FileResponse(_HOME_HTML)
 
 # ── Individual HTML page routes (clean URLs for browser navigation) ───────────
@@ -538,12 +550,12 @@ def add_asset_manually(asset: AssetSchema):
     try:
         query = text("""
             INSERT INTO Assets (name, `serial No.`, purchase_date, asset_type, status, Remarks) 
-            VALUES (:name, :serial No., :purchase_date, :asset_type, :status, :remarks)
+            VALUES (:name, :serial_no, :purchase_date, :asset_type, :status, :remarks)
         """)
         with engines["assets"].connect() as connection:
             connection.execute(query, {
                 "name": asset.name,
-                "serial No.": asset.serialNo,
+                "serial_no": asset.serialNo,
                 "purchase_date": asset.purchase_date,
                 "asset_type": asset.asset_type,
                 "status": asset.status,
@@ -711,7 +723,7 @@ def update_assigned_asset_record(asset: AssignedAssetUpdateSchema = Body(...)):
             asset_query = f"""
                 UPDATE totalassets 
                 SET {', '.join(asset_pairs)} 
-                WHERE assetId = :asset_id
+                WHERE asset_id = :asset_id
             """
             with engines["assets"].connect() as connection:
                 connection.execute(text(asset_query), asset_payload)

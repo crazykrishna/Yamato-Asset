@@ -77,9 +77,15 @@ header #contentbar button:hover, #profile button:hover{
     justify-content: flex-start; 
     gap: 10px;
     padding: 10px 5px;
-    overflow: hidden; 
+    overflow-y: auto; 
+    scrollbar-width: none;      /* Firefox */
+    -ms-overflow-style: none;   /* IE/Edge */
     transition: width 0.3s ease;
     box-sizing: border-box;
+}
+
+#sidebar::-webkit-scrollbar {
+    display: none;              /* Chrome/Safari */
 }
 
 #sidebar:hover {
@@ -114,6 +120,10 @@ header #contentbar button:hover, #profile button:hover{
     margin-left: 10px;
     transition: opacity 0.2s ease;
     pointer-events: none;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
 #sidebar:hover button span {
@@ -175,4 +185,87 @@ header #contentbar button:hover, #profile button:hover{
     border: 1px solid grey;
     padding: 20px; 
     box-sizing: border-box;
+}
+
+/* ── Software Dropdown ── */
+#software-dropdown-wrapper {
+    width: 100%;
+    flex-shrink: 0;
+}
+
+/* The toggle button already inherits #sidebar button styles.
+   We only need to override what's different. */
+#software-toggle {
+    width: 100%;
+}
+
+#software-arrow {
+    font-size: 16px;
+    min-width: unset !important;
+    transition: transform 0.3s ease;
+    display: inline-flex !important;
+}
+
+#software-arrow.rotated {
+    transform: rotate(180deg);
+}
+
+#software-submenu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease, border-color 0.35s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding-left: 8px;
+    margin-left: 14px;
+    border-left: 2px solid transparent;
+}
+
+#software-submenu.open {
+    max-height: 200px;
+    border-left-color: #f5cf04;
+}
+
+/* Sub-menu item buttons */
+.submenu-btn {
+    cursor: pointer;
+    border: none;
+    background-color: transparent;
+    color: #aaa;
+    width: 100%;
+    height: 42px;
+    border-radius: 8px;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    text-align: left;
+    transition: background-color 0.2s, color 0.2s;
+    font-size: 0.9em;
+}
+
+.submenu-btn i {
+    font-size: 17px;
+    min-width: 26px;
+    display: flex;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.submenu-btn span {
+    opacity: 0;
+    margin-left: 8px;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+#sidebar:hover .submenu-btn span {
+    opacity: 1;
+}
+
+.submenu-btn:hover {
+    background-color: #f5cf04;
+    color: #111;
 }

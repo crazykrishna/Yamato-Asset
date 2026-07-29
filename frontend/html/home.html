@@ -30,7 +30,7 @@
     </header>
 
     <div id="parent">
-            <div id="sidebar">
+    <div id="sidebar">
         <button id="find">
             <i class="ri-search-line"></i> 
             <span>Find</span>
@@ -39,6 +39,25 @@
             <i class="ri-file-list-3-line"></i> 
             <span>Assets list</span>
         </button>
+
+        <!-- Software Dropdown -->
+        <div id="software-dropdown-wrapper">
+            <button id="software-toggle" onclick="toggleSoftwareDropdown()">
+                <i class="ri-computer-line"></i>
+                <span>Software <i class="ri-arrow-down-s-line" id="software-arrow"></i></span>
+            </button>
+            <div id="software-submenu">
+                <button class="submenu-btn" id="all-softwares">
+                    <i class="ri-apps-line"></i>
+                    <span>All Softwares</span>
+                </button>
+                <button class="submenu-btn" id="license-agreements">
+                    <i class="ri-file-shield-2-line"></i>
+                    <span>License Agreements</span>
+                </button>
+            </div>
+        </div>
+
         <button id="Register-Asset">
             <i class="ri-registered-line"></i> 
             <span>Register Asset</span>

@@ -1,7 +1,8 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import pandas as pd
-from database import engine
+from sqlalchemy import text
+from database import engines
 
 
 app = FastAPI()
@@ -11,17 +12,20 @@ class AssetDetails(BaseModel):
     portal_password : str
 
 @app.post('/app/users/register')
-async def add_user(asset: AssetDetails ):
+def add_user(asset: AssetDetails):
     try:
         username = asset.portal_username
         password = asset.portal_password
 
-        query = "INSERT INTO LOGIN(username, password) VALUES (? , ?) RETURNING *"
+        with engines["yamato_assets"].connect() as connection:
+            result = connection.execute(
+                text("INSERT INTO LOGIN(username, password) VALUES (:username, :password)"),
+                {"username": username, "password": password}
+            )
+            connection.commit()
 
-        result = await engine.fetchrow(query, username, password)
-
-        return(result)
+        return {"message": "User registered successfully.", "username": username}
     
     except Exception as e:
         print(f"Error occured : {e}")
-        raise HTTPException(status_code=500, detail="Internal Server Error")
+        raise HTTPException(status_code=500, detail="Internal Server Error")

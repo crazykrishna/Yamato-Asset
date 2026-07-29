@@ -135,3 +135,20 @@ window.addEventListener('DOMContentLoaded', () => {
     updateDashboard();
     renderStatusDoughnutChart();
 });
+
+// SOFTWARE DROPDOWN TOGGLE
+function toggleSoftwareDropdown() {
+    const submenu = document.getElementById('software-submenu');
+    const arrow   = document.getElementById('software-arrow');
+    if (!submenu) return;
+    submenu.classList.toggle('open');
+    arrow?.classList.toggle('rotated');
+}
+
+// Sub-menu navigation listeners
+document.getElementById('all-softwares')?.addEventListener('click', () => {
+    window.location.href = '/all-softwares';   // update route as needed
+});
+document.getElementById('license-agreements')?.addEventListener('click', () => {
+    window.location.href = '/license-agreements';   // update route as needed
+});
