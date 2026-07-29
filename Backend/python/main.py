@@ -22,8 +22,6 @@ from fastapi.staticfiles import StaticFiles
 # Import the mapped engines from your database.py
 from database import engines
 
-
-
 # ----------------------------------------------------
 # PASSWORD HASHING (bcrypt direct — no passlib)
 # passlib 1.7.4 is broken with bcrypt 5.0.0 due to
